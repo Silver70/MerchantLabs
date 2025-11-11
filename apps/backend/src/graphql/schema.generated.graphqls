@@ -1,0 +1,729 @@
+input AddMediaToProductInput {
+  isPrimary: Boolean
+  mediaId: UUID!
+  position: Int!
+}
+
+input AddMediaToProductVariantInput {
+  isPrimary: Boolean
+  mediaId: UUID!
+  position: Int!
+}
+
+type Address {
+  city: String!
+  country: String!
+  createdAt: DateTime!
+  customerId: UUID!
+  id: UUID!
+  line1: String!
+  line2: String
+  postalCode: String!
+  state: String!
+  type: AddressType!
+  updatedAt: DateTime!
+}
+
+type AddressConnection {
+  edges: [AddressEdge!]!
+  pageInfo: PageInfo!
+}
+
+type AddressEdge {
+  cursor: String!
+  node: Address!
+}
+
+type AddressResponse {
+  data: Address
+  error: ErrorResponse
+  success: Boolean!
+}
+
+enum AddressType {
+  BILLING
+  SHIPPING
+}
+
+type Attribute {
+  id: UUID!
+  name: String!
+  values: [AttributeValue!]!
+}
+
+type AttributeResponse {
+  data: Attribute
+  error: ErrorResponse
+  success: Boolean!
+}
+
+type AttributeValue {
+  attributeId: UUID!
+  id: UUID!
+  value: String!
+}
+
+type Category {
+  children: [Category!]!
+  createdAt: DateTime!
+  id: UUID!
+  name: String!
+  parent: Category
+  slug: String!
+  updatedAt: DateTime!
+}
+
+type CategoryConnection {
+  edges: [CategoryEdge!]!
+  pageInfo: PageInfo!
+}
+
+type CategoryEdge {
+  cursor: String!
+  node: Category!
+}
+
+type CategoryResponse {
+  data: Category
+  error: ErrorResponse
+  success: Boolean!
+}
+
+type Channel {
+  createdAt: DateTime!
+  currencyCode: String!
+  defaultLanguage: String
+  id: UUID!
+  isActive: Boolean!
+  name: String!
+  region: Region!
+  slug: String!
+  taxInclusive: Boolean!
+  updatedAt: DateTime!
+}
+
+type ChannelConnection {
+  edges: [ChannelEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ChannelEdge {
+  cursor: String!
+  node: Channel!
+}
+
+type ChannelProduct {
+  channelId: UUID!
+  isVisible: Boolean!
+  price: Decimal!
+  productVariantId: UUID!
+}
+
+input ChannelProductPriceInput {
+  isVisible: Boolean
+  price: Decimal!
+  productVariantId: UUID!
+}
+
+type ChannelResponse {
+  data: Channel
+  error: ErrorResponse
+  success: Boolean!
+}
+
+type Collection {
+  createdAt: DateTime!
+  description: String
+  id: UUID!
+  isActive: Boolean!
+  name: String!
+  products: [Product!]!
+  slug: String!
+  updatedAt: DateTime!
+}
+
+type CollectionConnection {
+  edges: [CollectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type CollectionEdge {
+  cursor: String!
+  node: Collection!
+}
+
+type CollectionResponse {
+  data: Collection
+  error: ErrorResponse
+  success: Boolean!
+}
+
+input CreateAddressInput {
+  city: String!
+  country: String!
+  customerId: UUID!
+  line1: String!
+  line2: String
+  postalCode: String!
+  state: String!
+  type: AddressType!
+}
+
+input CreateAttributeInput {
+  name: String!
+}
+
+input CreateAttributeValueInput {
+  attributeId: UUID!
+  value: String!
+}
+
+input CreateCategoryInput {
+  name: String!
+  parentId: UUID
+  slug: String!
+}
+
+input CreateChannelInput {
+  currencyCode: String!
+  defaultLanguage: String
+  name: String!
+  regionId: UUID!
+  slug: String!
+  taxInclusive: Boolean
+}
+
+input CreateCollectionInput {
+  description: String
+  name: String!
+  slug: String!
+}
+
+input CreateCustomerInput {
+  email: String!
+  firstName: String!
+  lastName: String!
+  phone: String
+}
+
+input CreateDiscountInput {
+  appliesTo: DiscountAppliesToType!
+  code: String
+  endDate: DateTime!
+  maxDiscountAmount: Decimal
+  minOrderAmount: Decimal
+  startDate: DateTime!
+  targetId: UUID
+  type: DiscountType!
+  value: Decimal!
+}
+
+input CreateOrderInput {
+  billingAddressId: UUID!
+  channelId: UUID!
+  customerId: UUID!
+  discountId: UUID
+  items: [OrderItemInput!]!
+  shippingAddressId: UUID!
+}
+
+input CreateProductInput {
+  categoryId: UUID!
+  description: String
+  name: String!
+  slug: String!
+}
+
+input CreateProductVariantInput {
+  productId: UUID!
+  quantityInStock: Int
+  sku: String!
+}
+
+input CreateRegionInput {
+  countryCodes: [String!]!
+  name: String!
+  taxCode: String
+  taxRate: Decimal!
+}
+
+type Customer {
+  addresses: [Address!]!
+  createdAt: DateTime!
+  email: String!
+  firstName: String!
+  id: UUID!
+  lastName: String!
+  phone: String
+  updatedAt: DateTime!
+}
+
+type CustomerConnection {
+  edges: [CustomerEdge!]!
+  pageInfo: PageInfo!
+}
+
+type CustomerEdge {
+  cursor: String!
+  node: Customer!
+}
+
+type CustomerResponse {
+  data: Customer
+  error: ErrorResponse
+  success: Boolean!
+}
+
+scalar DateTime
+
+scalar Decimal
+
+type Discount {
+  appliesTo: DiscountAppliesToType!
+  code: String
+  createdAt: DateTime!
+  endDate: DateTime!
+  id: UUID!
+  isActive: Boolean!
+  maxDiscountAmount: Decimal
+  minOrderAmount: Decimal
+  startDate: DateTime!
+  targetId: UUID
+  type: DiscountType!
+  updatedAt: DateTime!
+  value: Decimal!
+}
+
+enum DiscountAppliesToType {
+  CATEGORY
+  ORDER
+  PRODUCT
+}
+
+type DiscountConnection {
+  edges: [DiscountEdge!]!
+  pageInfo: PageInfo!
+}
+
+type DiscountEdge {
+  cursor: String!
+  node: Discount!
+}
+
+type DiscountResponse {
+  data: Discount
+  error: ErrorResponse
+  success: Boolean!
+}
+
+enum DiscountType {
+  FIXED
+  PERCENTAGE
+}
+
+interface Error {
+  code: String!
+  message: String!
+}
+
+type ErrorResponse implements Error {
+  code: String!
+  message: String!
+}
+
+type Media {
+  altText: String
+  createdAt: DateTime!
+  id: UUID!
+  type: MediaType!
+  updatedAt: DateTime!
+  url: String!
+}
+
+type MediaConnection {
+  edges: [MediaEdge!]!
+  pageInfo: PageInfo!
+}
+
+type MediaEdge {
+  cursor: String!
+  node: Media!
+}
+
+type MediaResponse {
+  data: Media
+  error: ErrorResponse
+  success: Boolean!
+}
+
+enum MediaType {
+  FILE
+  IMAGE
+  VIDEO
+}
+
+type Mutation {
+  _empty: String
+  addAttributeToVariant(attributeValueId: UUID!, variantId: UUID!): ProductVariantResponse!
+  addMediaToProduct(input: AddMediaToProductInput!, productId: UUID!): ProductMediaResponse!
+  addMediaToProductVariant(input: AddMediaToProductVariantInput!, productVariantId: UUID!): ProductVariantMediaResponse!
+  addProductToCollection(collectionId: UUID!, productId: UUID!): CollectionResponse!
+  createAddress(input: CreateAddressInput!): AddressResponse!
+  createAttribute(input: CreateAttributeInput!): AttributeResponse!
+  createAttributeValue(input: CreateAttributeValueInput!): AttributeResponse!
+  createCategory(input: CreateCategoryInput!): CategoryResponse!
+  createChannel(input: CreateChannelInput!): ChannelResponse!
+  createCollection(input: CreateCollectionInput!): CollectionResponse!
+  createCustomer(input: CreateCustomerInput!): CustomerResponse!
+  createDiscount(input: CreateDiscountInput!): DiscountResponse!
+  createOrder(input: CreateOrderInput!): OrderResponse!
+  createProduct(input: CreateProductInput!): ProductResponse!
+  createProductVariant(input: CreateProductVariantInput!): ProductVariantResponse!
+  createRegion(input: CreateRegionInput!): RegionResponse!
+  deleteAddress(id: UUID!): AddressResponse!
+  deleteAttribute(id: UUID!): AttributeResponse!
+  deleteAttributeValue(id: UUID!): AttributeResponse!
+  deleteCategory(id: UUID!): CategoryResponse!
+  deleteChannel(id: UUID!): ChannelResponse!
+  deleteCollection(id: UUID!): CollectionResponse!
+  deleteCustomer(id: UUID!): CustomerResponse!
+  deleteDiscount(id: UUID!): DiscountResponse!
+  deleteMedia(id: UUID!): MediaResponse!
+  deleteOrder(id: UUID!): OrderResponse!
+  deleteProduct(id: UUID!): ProductResponse!
+  deleteProductVariant(id: UUID!): ProductVariantResponse!
+  deleteRegion(id: UUID!): RegionResponse!
+  removeAttributeFromVariant(attributeValueId: UUID!, variantId: UUID!): ProductVariantResponse!
+  removeMediaFromProduct(mediaId: UUID!, productId: UUID!): ProductMediaResponse!
+  removeMediaFromProductVariant(mediaId: UUID!, productVariantId: UUID!): ProductVariantMediaResponse!
+  removeProductFromCollection(collectionId: UUID!, productId: UUID!): CollectionResponse!
+  setChannelProductPrice(channelId: UUID!, input: ChannelProductPriceInput!): ChannelResponse!
+  updateAddress(id: UUID!, input: UpdateAddressInput!): AddressResponse!
+  updateCategory(id: UUID!, input: UpdateCategoryInput!): CategoryResponse!
+  updateChannel(id: UUID!, input: UpdateChannelInput!): ChannelResponse!
+  updateCollection(id: UUID!, input: UpdateCollectionInput!): CollectionResponse!
+  updateCustomer(id: UUID!, input: UpdateCustomerInput!): CustomerResponse!
+  updateDiscount(id: UUID!, input: UpdateDiscountInput!): DiscountResponse!
+  updateMedia(id: UUID!, input: UpdateMediaInput!): MediaResponse!
+  updateOrderStatus(id: UUID!, input: UpdateOrderStatusInput!): OrderResponse!
+  updateProduct(id: UUID!, input: UpdateProductInput!): ProductResponse!
+  updateProductVariant(id: UUID!, input: UpdateProductVariantInput!): ProductVariantResponse!
+  updateRegion(id: UUID!, input: UpdateRegionInput!): RegionResponse!
+  uploadMedia(input: UploadMediaInput!): MediaResponse!
+}
+
+type Order {
+  billingAddress: Address!
+  channel: Channel!
+  createdAt: DateTime!
+  currencyCode: String!
+  customer: Customer!
+  discount: Discount
+  id: UUID!
+  items: [OrderItem!]!
+  region: Region!
+  shippingAddress: Address!
+  status: OrderStatus!
+  subtotalAmount: Decimal!
+  taxAmount: Decimal!
+  totalAmount: Decimal!
+  updatedAt: DateTime!
+}
+
+type OrderConnection {
+  edges: [OrderEdge!]!
+  pageInfo: PageInfo!
+}
+
+type OrderEdge {
+  cursor: String!
+  node: Order!
+}
+
+input OrderFilterInput {
+  channelId: UUID
+  customerId: UUID
+  endDate: DateTime
+  maxAmount: Decimal
+  minAmount: Decimal
+  startDate: DateTime
+  status: OrderStatus
+}
+
+type OrderItem {
+  id: UUID!
+  orderId: UUID!
+  priceAtOrderTime: Decimal!
+  productVariant: ProductVariant!
+  quantity: Int!
+}
+
+type OrderItemConnection {
+  edges: [OrderItemEdge!]!
+  pageInfo: PageInfo!
+}
+
+type OrderItemEdge {
+  cursor: String!
+  node: OrderItem!
+}
+
+input OrderItemInput {
+  priceAtOrderTime: Decimal!
+  productVariantId: UUID!
+  quantity: Int!
+}
+
+type OrderResponse {
+  data: Order
+  error: ErrorResponse
+  success: Boolean!
+}
+
+enum OrderStatus {
+  CANCELLED
+  PAID
+  PENDING
+  SHIPPED
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  totalCount: Int!
+}
+
+type Product {
+  category: Category!
+  createdAt: DateTime!
+  description: String
+  id: UUID!
+  isActive: Boolean!
+  name: String!
+  slug: String!
+  updatedAt: DateTime!
+  variants: [ProductVariant!]!
+}
+
+type ProductConnection {
+  edges: [ProductEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ProductEdge {
+  cursor: String!
+  node: Product!
+}
+
+input ProductFilterInput {
+  categoryId: UUID
+  collectionId: UUID
+  isActive: Boolean
+  maxPrice: Decimal
+  minPrice: Decimal
+  search: String
+}
+
+type ProductMedia {
+  isPrimary: Boolean!
+  media: Media!
+  mediaId: UUID!
+  position: Int!
+  productId: UUID!
+}
+
+type ProductMediaResponse {
+  data: ProductMedia
+  error: ErrorResponse
+  success: Boolean!
+}
+
+type ProductResponse {
+  data: Product
+  error: ErrorResponse
+  success: Boolean!
+}
+
+type ProductVariant {
+  attributes: [AttributeValue!]!
+  createdAt: DateTime!
+  id: UUID!
+  productId: UUID!
+  quantityInStock: Int!
+  sku: String!
+  updatedAt: DateTime!
+}
+
+input ProductVariantAttributeInput {
+  attributeValueId: UUID!
+}
+
+type ProductVariantMedia {
+  isPrimary: Boolean!
+  media: Media!
+  mediaId: UUID!
+  position: Int!
+  productVariantId: UUID!
+}
+
+type ProductVariantMediaResponse {
+  data: ProductVariantMedia
+  error: ErrorResponse
+  success: Boolean!
+}
+
+type ProductVariantResponse {
+  data: ProductVariant
+  error: ErrorResponse
+  success: Boolean!
+}
+
+type Query {
+  _empty: String
+  address(id: UUID!): Address
+  addresses(after: String, customerId: UUID, first: Int, type: AddressType): AddressConnection!
+  attribute(id: UUID!): Attribute
+  attributes(after: String, first: Int): [Attribute!]!
+  categories(after: String, first: Int): CategoryConnection!
+  category(id: UUID!): Category
+  channel(id: UUID!): Channel
+  channels(after: String, first: Int): ChannelConnection!
+  collection(id: UUID!): Collection
+  collections(after: String, first: Int): CollectionConnection!
+  customer(id: UUID!): Customer
+  customers(after: String, email: String, first: Int): CustomerConnection!
+  discount(id: UUID!): Discount
+  discountByCode(code: String!): Discount
+  discounts(after: String, first: Int, isActive: Boolean): DiscountConnection!
+  media(id: UUID!): Media
+  mediaList(after: String, first: Int, type: MediaType): MediaConnection!
+  order(id: UUID!): Order
+  orders(after: String, customerId: UUID, filter: OrderFilterInput, first: Int, status: OrderStatus): OrderConnection!
+  product(id: UUID!): Product
+  productBySlug(slug: String!): Product
+  productVariant(id: UUID!): ProductVariant
+  products(after: String, categoryId: UUID, collectionId: UUID, filter: ProductFilterInput, first: Int, isActive: Boolean): ProductConnection!
+  region(id: UUID!): Region
+  regions(after: String, first: Int): RegionConnection!
+}
+
+type Region {
+  countryCodes: [String!]!
+  createdAt: DateTime!
+  id: UUID!
+  name: String!
+  taxCode: String
+  taxRate: Decimal!
+  updatedAt: DateTime!
+}
+
+type RegionConnection {
+  edges: [RegionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type RegionEdge {
+  cursor: String!
+  node: Region!
+}
+
+type RegionResponse {
+  data: Region
+  error: ErrorResponse
+  success: Boolean!
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+scalar UUID
+
+input UpdateAddressInput {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postalCode: String
+  state: String
+  type: AddressType
+}
+
+input UpdateCategoryInput {
+  name: String
+  parentId: UUID
+  slug: String
+}
+
+input UpdateChannelInput {
+  currencyCode: String
+  defaultLanguage: String
+  isActive: Boolean
+  name: String
+  regionId: UUID
+  slug: String
+  taxInclusive: Boolean
+}
+
+input UpdateCollectionInput {
+  description: String
+  isActive: Boolean
+  name: String
+  slug: String
+}
+
+input UpdateCustomerInput {
+  firstName: String
+  lastName: String
+  phone: String
+}
+
+input UpdateDiscountInput {
+  appliesTo: DiscountAppliesToType
+  code: String
+  endDate: DateTime
+  isActive: Boolean
+  maxDiscountAmount: Decimal
+  minOrderAmount: Decimal
+  startDate: DateTime
+  targetId: UUID
+  type: DiscountType
+  value: Decimal
+}
+
+input UpdateMediaInput {
+  altText: String
+}
+
+input UpdateOrderStatusInput {
+  status: OrderStatus!
+}
+
+input UpdateProductInput {
+  categoryId: UUID
+  description: String
+  isActive: Boolean
+  name: String
+  slug: String
+}
+
+input UpdateProductVariantInput {
+  quantityInStock: Int
+  sku: String
+}
+
+input UpdateRegionInput {
+  countryCodes: [String!]
+  name: String
+  taxCode: String
+  taxRate: Decimal
+}
+
+input UploadMediaInput {
+  altText: String
+  type: MediaType!
+  url: String!
+}

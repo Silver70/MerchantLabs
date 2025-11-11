@@ -1,4 +1,3 @@
-"""Discount/coupon code"""
 type Discount {
   id: UUID!
   code: String
@@ -15,7 +14,6 @@ type Discount {
   updatedAt: DateTime!
 }
 
-"""Paginated discounts response"""
 type DiscountConnection {
   edges: [DiscountEdge!]!
   pageInfo: PageInfo!
@@ -26,7 +24,6 @@ type DiscountEdge {
   node: Discount!
 }
 
-"""Input for creating a discount"""
 input CreateDiscountInput {
   code: String
   type: DiscountType!
@@ -39,7 +36,6 @@ input CreateDiscountInput {
   maxDiscountAmount: Decimal
 }
 
-"""Input for updating a discount"""
 input UpdateDiscountInput {
   code: String
   type: DiscountType
@@ -53,21 +49,18 @@ input UpdateDiscountInput {
   maxDiscountAmount: Decimal
 }
 
-"""Response wrapper for discount operations"""
 type DiscountResponse {
   success: Boolean!
   data: Discount
   error: ErrorResponse
 }
 
-"""Extended Query for discounts"""
 extend type Query {
   discount(id: UUID!): Discount
   discountByCode(code: String!): Discount
   discounts(first: Int, after: String, isActive: Boolean): DiscountConnection!
 }
 
-"""Extended Mutation for discounts"""
 extend type Mutation {
   createDiscount(input: CreateDiscountInput!): DiscountResponse!
   updateDiscount(

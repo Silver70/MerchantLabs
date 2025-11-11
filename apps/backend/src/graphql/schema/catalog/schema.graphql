@@ -1,6 +1,3 @@
-"""
-Product category for organizing products
-"""
 type Category {
   id: UUID!
   name: String!
@@ -11,27 +8,18 @@ type Category {
   updatedAt: DateTime!
 }
 
-"""
-Product attribute definition
-"""
 type Attribute {
   id: UUID!
   name: String!
   values: [AttributeValue!]!
 }
 
-"""
-Product attribute value
-"""
 type AttributeValue {
   id: UUID!
   attributeId: UUID!
   value: String!
 }
 
-"""
-Product variant with SKU and stock info
-"""
 type ProductVariant {
   id: UUID!
   productId: UUID!
@@ -42,9 +30,6 @@ type ProductVariant {
   updatedAt: DateTime!
 }
 
-"""
-Main product entity
-"""
 type Product {
   id: UUID!
   name: String!
@@ -57,9 +42,6 @@ type Product {
   updatedAt: DateTime!
 }
 
-"""
-Collection of products
-"""
 type Collection {
   id: UUID!
   name: String!
@@ -71,9 +53,6 @@ type Collection {
   updatedAt: DateTime!
 }
 
-"""
-Paginated products response
-"""
 type ProductConnection {
   edges: [ProductEdge!]!
   pageInfo: PageInfo!
@@ -84,9 +63,6 @@ type ProductEdge {
   node: Product!
 }
 
-"""
-Paginated categories response
-"""
 type CategoryConnection {
   edges: [CategoryEdge!]!
   pageInfo: PageInfo!
@@ -97,9 +73,6 @@ type CategoryEdge {
   node: Category!
 }
 
-"""
-Paginated collections response
-"""
 type CollectionConnection {
   edges: [CollectionEdge!]!
   pageInfo: PageInfo!
@@ -110,7 +83,6 @@ type CollectionEdge {
   node: Collection!
 }
 
-"""Product search and filter options"""
 input ProductFilterInput {
   categoryId: UUID
   collectionId: UUID
@@ -120,21 +92,18 @@ input ProductFilterInput {
   maxPrice: Decimal
 }
 
-"""Input for creating a category"""
 input CreateCategoryInput {
   name: String!
   slug: String!
   parentId: UUID
 }
 
-"""Input for updating a category"""
 input UpdateCategoryInput {
   name: String
   slug: String
   parentId: UUID
 }
 
-"""Input for creating a product"""
 input CreateProductInput {
   name: String!
   slug: String!
@@ -142,7 +111,6 @@ input CreateProductInput {
   categoryId: UUID!
 }
 
-"""Input for updating a product"""
 input UpdateProductInput {
   name: String
   slug: String
@@ -151,32 +119,27 @@ input UpdateProductInput {
   isActive: Boolean
 }
 
-"""Input for creating a product variant"""
 input CreateProductVariantInput {
   productId: UUID!
   sku: String!
   quantityInStock: Int
 }
 
-"""Input for updating a product variant"""
 input UpdateProductVariantInput {
   sku: String
   quantityInStock: Int
 }
 
-"""Input for variant attributes"""
 input ProductVariantAttributeInput {
   attributeValueId: UUID!
 }
 
-"""Input for creating a collection"""
 input CreateCollectionInput {
   name: String!
   slug: String!
   description: String
 }
 
-"""Input for updating a collection"""
 input UpdateCollectionInput {
   name: String
   slug: String
@@ -184,53 +147,45 @@ input UpdateCollectionInput {
   isActive: Boolean
 }
 
-"""Input for attribute creation"""
 input CreateAttributeInput {
   name: String!
 }
 
-"""Input for attribute value creation"""
 input CreateAttributeValueInput {
   attributeId: UUID!
   value: String!
 }
 
-"""Response wrapper for category operations"""
 type CategoryResponse {
   success: Boolean!
   data: Category
   error: ErrorResponse
 }
 
-"""Response wrapper for product operations"""
 type ProductResponse {
   success: Boolean!
   data: Product
   error: ErrorResponse
 }
 
-"""Response wrapper for product variant operations"""
 type ProductVariantResponse {
   success: Boolean!
   data: ProductVariant
   error: ErrorResponse
 }
 
-"""Response wrapper for collection operations"""
 type CollectionResponse {
   success: Boolean!
   data: Collection
   error: ErrorResponse
 }
 
-"""Response wrapper for attribute operations"""
 type AttributeResponse {
   success: Boolean!
   data: Attribute
   error: ErrorResponse
 }
 
-"""Extended Query for catalog"""
 extend type Query {
   category(id: UUID!): Category
   categories(first: Int, after: String): CategoryConnection!
@@ -248,7 +203,6 @@ extend type Query {
   productVariant(id: UUID!): ProductVariant
 }
 
-"""Extended Mutation for catalog"""
 extend type Mutation {
   createCategory(input: CreateCategoryInput!): CategoryResponse!
   updateCategory(id: UUID!, input: UpdateCategoryInput!): CategoryResponse!

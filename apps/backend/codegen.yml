@@ -1,0 +1,7 @@
+overwrite: true
+schema: "src/graphql/schema/**/*.graphql"
+generates:
+  src/graphql:
+    preset: "@eddeee888/gcg-typescript-resolver-files"
+    presetConfig:
+      baseDir: src/graphql

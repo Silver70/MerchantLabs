@@ -1,4 +1,3 @@
-"""Region representing a geographical area with tax rules"""
 type Region {
   id: UUID!
   name: String!
@@ -9,7 +8,6 @@ type Region {
   updatedAt: DateTime!
 }
 
-"""Channel representing a store front with specific currency and region"""
 type Channel {
   id: UUID!
   name: String!
@@ -23,7 +21,6 @@ type Channel {
   updatedAt: DateTime!
 }
 
-"""Product pricing in a specific channel"""
 type ChannelProduct {
   channelId: UUID!
   productVariantId: UUID!
@@ -31,7 +28,6 @@ type ChannelProduct {
   isVisible: Boolean!
 }
 
-"""Paginated regions response"""
 type RegionConnection {
   edges: [RegionEdge!]!
   pageInfo: PageInfo!
@@ -42,7 +38,6 @@ type RegionEdge {
   node: Region!
 }
 
-"""Paginated channels response"""
 type ChannelConnection {
   edges: [ChannelEdge!]!
   pageInfo: PageInfo!
@@ -53,7 +48,6 @@ type ChannelEdge {
   node: Channel!
 }
 
-"""Input for creating a region"""
 input CreateRegionInput {
   name: String!
   countryCodes: [String!]!
@@ -61,7 +55,6 @@ input CreateRegionInput {
   taxCode: String
 }
 
-"""Input for updating a region"""
 input UpdateRegionInput {
   name: String
   countryCodes: [String!]
@@ -69,7 +62,6 @@ input UpdateRegionInput {
   taxCode: String
 }
 
-"""Input for creating a channel"""
 input CreateChannelInput {
   name: String!
   slug: String!
@@ -79,7 +71,6 @@ input CreateChannelInput {
   defaultLanguage: String
 }
 
-"""Input for updating a channel"""
 input UpdateChannelInput {
   name: String
   slug: String
@@ -90,28 +81,24 @@ input UpdateChannelInput {
   isActive: Boolean
 }
 
-"""Input for channel product pricing"""
 input ChannelProductPriceInput {
   productVariantId: UUID!
   price: Decimal!
   isVisible: Boolean
 }
 
-"""Response wrapper for region operations"""
 type RegionResponse {
   success: Boolean!
   data: Region
   error: ErrorResponse
 }
 
-"""Response wrapper for channel operations"""
 type ChannelResponse {
   success: Boolean!
   data: Channel
   error: ErrorResponse
 }
 
-"""Extended Query for regions and channels"""
 extend type Query {
   region(id: UUID!): Region
   regions(first: Int, after: String): RegionConnection!
@@ -120,7 +107,6 @@ extend type Query {
   channels(first: Int, after: String): ChannelConnection!
 }
 
-"""Extended Mutation for regions and channels"""
 extend type Mutation {
   createRegion(input: CreateRegionInput!): RegionResponse!
   updateRegion(id: UUID!, input: UpdateRegionInput!): RegionResponse!

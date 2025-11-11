@@ -1,4 +1,3 @@
-"""Item in an order"""
 type OrderItem {
   id: UUID!
   orderId: UUID!
@@ -7,7 +6,6 @@ type OrderItem {
   priceAtOrderTime: Decimal!
 }
 
-"""Customer order"""
 type Order {
   id: UUID!
   customer: Customer!
@@ -26,7 +24,6 @@ type Order {
   updatedAt: DateTime!
 }
 
-"""Paginated orders response"""
 type OrderConnection {
   edges: [OrderEdge!]!
   pageInfo: PageInfo!
@@ -37,7 +34,6 @@ type OrderEdge {
   node: Order!
 }
 
-"""Paginated order items response"""
 type OrderItemConnection {
   edges: [OrderItemEdge!]!
   pageInfo: PageInfo!
@@ -48,14 +44,12 @@ type OrderItemEdge {
   node: OrderItem!
 }
 
-"""Input for order item"""
 input OrderItemInput {
   productVariantId: UUID!
   quantity: Int!
   priceAtOrderTime: Decimal!
 }
 
-"""Input for creating an order"""
 input CreateOrderInput {
   customerId: UUID!
   channelId: UUID!
@@ -65,12 +59,10 @@ input CreateOrderInput {
   items: [OrderItemInput!]!
 }
 
-"""Input for updating order status"""
 input UpdateOrderStatusInput {
   status: OrderStatus!
 }
 
-"""Order filter options"""
 input OrderFilterInput {
   customerId: UUID
   channelId: UUID
@@ -81,14 +73,12 @@ input OrderFilterInput {
   endDate: DateTime
 }
 
-"""Response wrapper for order operations"""
 type OrderResponse {
   success: Boolean!
   data: Order
   error: ErrorResponse
 }
 
-"""Extended Query for orders"""
 extend type Query {
   order(id: UUID!): Order
   orders(
@@ -98,7 +88,6 @@ extend type Query {
   ): OrderConnection!
 }
 
-"""Extended Mutation for orders"""
 extend type Mutation {
   createOrder(input: CreateOrderInput!): OrderResponse!
   updateOrderStatus(
