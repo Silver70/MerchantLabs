@@ -1,0 +1,125 @@
+"""Customer address (shipping or billing)"""
+type Address {
+  id: UUID!
+  customerId: UUID!
+  type: AddressType!
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  postalCode: String!
+  country: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Customer entity"""
+type Customer {
+  id: UUID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String
+  addresses: [Address!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Paginated customers response"""
+type CustomerConnection {
+  edges: [CustomerEdge!]!
+  pageInfo: PageInfo!
+}
+
+type CustomerEdge {
+  cursor: String!
+  node: Customer!
+}
+
+"""Paginated addresses response"""
+type AddressConnection {
+  edges: [AddressEdge!]!
+  pageInfo: PageInfo!
+}
+
+type AddressEdge {
+  cursor: String!
+  node: Address!
+}
+
+"""Input for creating a customer"""
+input CreateCustomerInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String
+}
+
+"""Input for updating a customer"""
+input UpdateCustomerInput {
+  firstName: String
+  lastName: String
+  phone: String
+}
+
+"""Input for creating an address"""
+input CreateAddressInput {
+  customerId: UUID!
+  type: AddressType!
+  line1: String!
+  line2: String
+  city: String!
+  state: String!
+  postalCode: String!
+  country: String!
+}
+
+"""Input for updating an address"""
+input UpdateAddressInput {
+  type: AddressType
+  line1: String
+  line2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+}
+
+"""Response wrapper for customer operations"""
+type CustomerResponse {
+  success: Boolean!
+  data: Customer
+  error: ErrorResponse
+}
+
+"""Response wrapper for address operations"""
+type AddressResponse {
+  success: Boolean!
+  data: Address
+  error: ErrorResponse
+}
+
+"""Extended Query for customers"""
+extend type Query {
+  customer(id: UUID!): Customer
+  customers(first: Int, after: String, email: String): CustomerConnection!
+
+  address(id: UUID!): Address
+  addresses(
+    customerId: UUID
+    type: AddressType
+    first: Int
+    after: String
+  ): AddressConnection!
+}
+
+"""Extended Mutation for customers"""
+extend type Mutation {
+  createCustomer(input: CreateCustomerInput!): CustomerResponse!
+  updateCustomer(id: UUID!, input: UpdateCustomerInput!): CustomerResponse!
+  deleteCustomer(id: UUID!): CustomerResponse!
+
+  createAddress(input: CreateAddressInput!): AddressResponse!
+  updateAddress(id: UUID!, input: UpdateAddressInput!): AddressResponse!
+  deleteAddress(id: UUID!): AddressResponse!
+}

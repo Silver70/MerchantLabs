@@ -1,0 +1,75 @@
+"""Custom scalar types"""
+scalar DateTime
+scalar Decimal
+scalar UUID
+
+"""Enums for role-based access"""
+enum Role {
+  ADMIN
+  STAFF
+}
+
+"""Enums for discount types"""
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+"""Enums for discount application"""
+enum DiscountAppliesToType {
+  ORDER
+  PRODUCT
+  CATEGORY
+}
+
+"""Enums for media types"""
+enum MediaType {
+  IMAGE
+  VIDEO
+  FILE
+}
+
+"""Enums for address types"""
+enum AddressType {
+  SHIPPING
+  BILLING
+}
+
+"""Enums for order status"""
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  CANCELLED
+}
+
+"""Error interface for error handling"""
+interface Error {
+  message: String!
+  code: String!
+}
+
+"""Generic error response"""
+type ErrorResponse implements Error {
+  message: String!
+  code: String!
+}
+
+"""Pagination info"""
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+  totalCount: Int!
+}
+
+"""Root query type - extended by other modules"""
+type Query {
+  _empty: String
+}
+
+"""Root mutation type - extended by other modules"""
+type Mutation {
+  _empty: String
+}

@@ -1,0 +1,240 @@
+"""Root query type"""
+type Query {
+  """Regions"""
+  region(id: UUID!): Region
+  regions(first: Int, after: String): RegionConnection!
+
+  """Channels"""
+  channel(id: UUID!): Channel
+  channels(first: Int, after: String): ChannelConnection!
+
+  """Categories"""
+  category(id: UUID!): Category
+  categories(first: Int, after: String): CategoryConnection!
+
+  """Products"""
+  product(id: UUID!): Product
+  products(
+    first: Int
+    after: String
+    categoryId: UUID
+    collectionId: UUID
+    isActive: Boolean
+  ): ProductConnection!
+  productsBySlug(slug: String!): Product
+
+  """Collections"""
+  collection(id: UUID!): Collection
+  collections(first: Int, after: String): CollectionConnection!
+
+  """Customers"""
+  customer(id: UUID!): Customer
+  customers(first: Int, after: String): CustomerConnection!
+
+  """Addresses"""
+  address(id: UUID!): Address
+  addresses(customerId: UUID, first: Int, after: String): AddressConnection!
+
+  """Orders"""
+  order(id: UUID!): Order
+  orders(
+    customerId: UUID
+    status: OrderStatus
+    first: Int
+    after: String
+  ): OrderConnection!
+
+  """Discounts"""
+  discount(id: UUID!): Discount
+  discountByCode(code: String!): Discount
+  discounts(first: Int, after: String): DiscountConnection!
+
+  """Media"""
+  media(id: UUID!): Media
+  mediaList(first: Int, after: String): MediaConnection!
+}
+
+"""Root mutation type"""
+type Mutation {
+  """Region mutations"""
+  createRegion(
+    name: String!
+    countryCodes: [String!]!
+    taxRate: Decimal!
+    taxCode: String
+  ): Region
+  updateRegion(id: UUID!, name: String, taxRate: Decimal): Region
+  deleteRegion(id: UUID!): Boolean
+
+  """Channel mutations"""
+  createChannel(
+    name: String!
+    slug: String!
+    regionId: UUID!
+    currencyCode: String!
+    taxInclusive: Boolean
+    defaultLanguage: String
+  ): Channel
+  updateChannel(
+    id: UUID!
+    name: String
+    slug: String
+    isActive: Boolean
+  ): Channel
+  deleteChannel(id: UUID!): Boolean
+
+  """Category mutations"""
+  createCategory(
+    name: String!
+    slug: String!
+    parentId: UUID
+  ): Category
+  updateCategory(
+    id: UUID!
+    name: String
+    slug: String
+    parentId: UUID
+  ): Category
+  deleteCategory(id: UUID!): Boolean
+
+  """Product mutations"""
+  createProduct(
+    name: String!
+    slug: String!
+    description: String
+    categoryId: UUID!
+  ): Product
+  updateProduct(
+    id: UUID!
+    name: String
+    slug: String
+    description: String
+    categoryId: UUID
+    isActive: Boolean
+  ): Product
+  deleteProduct(id: UUID!): Boolean
+
+  """Product variant mutations"""
+  createProductVariant(
+    productId: UUID!
+    sku: String!
+    quantityInStock: Int
+  ): ProductVariant
+  updateProductVariant(
+    id: UUID!
+    sku: String
+    quantityInStock: Int
+  ): ProductVariant
+  deleteProductVariant(id: UUID!): Boolean
+
+  """Collection mutations"""
+  createCollection(
+    name: String!
+    slug: String!
+    description: String
+  ): Collection
+  updateCollection(
+    id: UUID!
+    name: String
+    slug: String
+    description: String
+    isActive: Boolean
+  ): Collection
+  deleteCollection(id: UUID!): Boolean
+  addProductToCollection(collectionId: UUID!, productId: UUID!): Collection
+  removeProductFromCollection(
+    collectionId: UUID!
+    productId: UUID!
+  ): Collection
+
+  """Customer mutations"""
+  createCustomer(
+    firstName: String!
+    lastName: String!
+    email: String!
+    phone: String
+  ): Customer
+  updateCustomer(
+    id: UUID!
+    firstName: String
+    lastName: String
+    phone: String
+  ): Customer
+  deleteCustomer(id: UUID!): Boolean
+
+  """Address mutations"""
+  createAddress(
+    customerId: UUID!
+    type: AddressType!
+    line1: String!
+    line2: String
+    city: String!
+    state: String!
+    postalCode: String!
+    country: String!
+  ): Address
+  updateAddress(
+    id: UUID!
+    type: AddressType
+    line1: String
+    line2: String
+    city: String
+    state: String
+    postalCode: String
+    country: String
+  ): Address
+  deleteAddress(id: UUID!): Boolean
+
+  """Order mutations"""
+  createOrder(
+    customerId: UUID!
+    channelId: UUID!
+    shippingAddressId: UUID!
+    billingAddressId: UUID!
+    discountId: UUID
+  ): Order
+  updateOrderStatus(id: UUID!, status: OrderStatus!): Order
+  deleteOrder(id: UUID!): Boolean
+
+  """Discount mutations"""
+  createDiscount(
+    code: String
+    type: DiscountType!
+    value: Decimal!
+    startDate: DateTime!
+    endDate: DateTime!
+    appliesTo: DiscountAppliesToType!
+    targetId: UUID
+    minOrderAmount: Decimal
+    maxDiscountAmount: Decimal
+  ): Discount
+  updateDiscount(
+    id: UUID!
+    code: String
+    type: DiscountType
+    value: Decimal
+    startDate: DateTime
+    endDate: DateTime
+    isActive: Boolean
+    appliesTo: DiscountAppliesToType
+    minOrderAmount: Decimal
+    maxDiscountAmount: Decimal
+  ): Discount
+  deleteDiscount(id: UUID!): Boolean
+
+  """Media mutations"""
+  uploadMedia(
+    url: String!
+    type: MediaType!
+    altText: String
+  ): Media
+  updateMedia(id: UUID!, altText: String): Media
+  deleteMedia(id: UUID!): Boolean
+  addMediaToProduct(productId: UUID!, mediaId: UUID!, position: Int!, isPrimary: Boolean): ProductMedia
+  addMediaToProductVariant(
+    productVariantId: UUID!
+    mediaId: UUID!
+    position: Int!
+    isPrimary: Boolean
+  ): ProductVariantMedia
+}

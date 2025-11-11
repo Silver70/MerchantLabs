@@ -1,0 +1,109 @@
+"""Item in an order"""
+type OrderItem {
+  id: UUID!
+  orderId: UUID!
+  productVariant: ProductVariant!
+  quantity: Int!
+  priceAtOrderTime: Decimal!
+}
+
+"""Customer order"""
+type Order {
+  id: UUID!
+  customer: Customer!
+  channel: Channel!
+  shippingAddress: Address!
+  billingAddress: Address!
+  discount: Discount
+  currencyCode: String!
+  region: Region!
+  items: [OrderItem!]!
+  subtotalAmount: Decimal!
+  taxAmount: Decimal!
+  totalAmount: Decimal!
+  status: OrderStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Paginated orders response"""
+type OrderConnection {
+  edges: [OrderEdge!]!
+  pageInfo: PageInfo!
+}
+
+type OrderEdge {
+  cursor: String!
+  node: Order!
+}
+
+"""Paginated order items response"""
+type OrderItemConnection {
+  edges: [OrderItemEdge!]!
+  pageInfo: PageInfo!
+}
+
+type OrderItemEdge {
+  cursor: String!
+  node: OrderItem!
+}
+
+"""Input for order item"""
+input OrderItemInput {
+  productVariantId: UUID!
+  quantity: Int!
+  priceAtOrderTime: Decimal!
+}
+
+"""Input for creating an order"""
+input CreateOrderInput {
+  customerId: UUID!
+  channelId: UUID!
+  shippingAddressId: UUID!
+  billingAddressId: UUID!
+  discountId: UUID
+  items: [OrderItemInput!]!
+}
+
+"""Input for updating order status"""
+input UpdateOrderStatusInput {
+  status: OrderStatus!
+}
+
+"""Order filter options"""
+input OrderFilterInput {
+  customerId: UUID
+  channelId: UUID
+  status: OrderStatus
+  minAmount: Decimal
+  maxAmount: Decimal
+  startDate: DateTime
+  endDate: DateTime
+}
+
+"""Response wrapper for order operations"""
+type OrderResponse {
+  success: Boolean!
+  data: Order
+  error: ErrorResponse
+}
+
+"""Extended Query for orders"""
+extend type Query {
+  order(id: UUID!): Order
+  orders(
+    first: Int
+    after: String
+    filter: OrderFilterInput
+  ): OrderConnection!
+}
+
+"""Extended Mutation for orders"""
+extend type Mutation {
+  createOrder(input: CreateOrderInput!): OrderResponse!
+  updateOrderStatus(
+    id: UUID!
+    input: UpdateOrderStatusInput!
+  ): OrderResponse!
+  deleteOrder(id: UUID!): OrderResponse!
+}

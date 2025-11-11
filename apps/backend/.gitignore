@@ -6,8 +6,10 @@ out
 dist
 *.tgz
 
-# drizzle
-.drizzle
+# Database files
+*.db
+*.sqlite
+*.sqlite3
 
 # code coverage
 coverage

@@ -1,0 +1,295 @@
+"""
+Product category for organizing products
+"""
+type Category {
+  id: UUID!
+  name: String!
+  slug: String!
+  parent: Category
+  children: [Category!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Product attribute definition
+"""
+type Attribute {
+  id: UUID!
+  name: String!
+  values: [AttributeValue!]!
+}
+
+"""
+Product attribute value
+"""
+type AttributeValue {
+  id: UUID!
+  attributeId: UUID!
+  value: String!
+}
+
+"""
+Product variant with SKU and stock info
+"""
+type ProductVariant {
+  id: UUID!
+  productId: UUID!
+  sku: String!
+  quantityInStock: Int!
+  attributes: [AttributeValue!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Main product entity
+"""
+type Product {
+  id: UUID!
+  name: String!
+  slug: String!
+  description: String
+  category: Category!
+  variants: [ProductVariant!]!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Collection of products
+"""
+type Collection {
+  id: UUID!
+  name: String!
+  slug: String!
+  description: String
+  products: [Product!]!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+Paginated products response
+"""
+type ProductConnection {
+  edges: [ProductEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ProductEdge {
+  cursor: String!
+  node: Product!
+}
+
+"""
+Paginated categories response
+"""
+type CategoryConnection {
+  edges: [CategoryEdge!]!
+  pageInfo: PageInfo!
+}
+
+type CategoryEdge {
+  cursor: String!
+  node: Category!
+}
+
+"""
+Paginated collections response
+"""
+type CollectionConnection {
+  edges: [CollectionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type CollectionEdge {
+  cursor: String!
+  node: Collection!
+}
+
+"""Product search and filter options"""
+input ProductFilterInput {
+  categoryId: UUID
+  collectionId: UUID
+  isActive: Boolean
+  search: String
+  minPrice: Decimal
+  maxPrice: Decimal
+}
+
+"""Input for creating a category"""
+input CreateCategoryInput {
+  name: String!
+  slug: String!
+  parentId: UUID
+}
+
+"""Input for updating a category"""
+input UpdateCategoryInput {
+  name: String
+  slug: String
+  parentId: UUID
+}
+
+"""Input for creating a product"""
+input CreateProductInput {
+  name: String!
+  slug: String!
+  description: String
+  categoryId: UUID!
+}
+
+"""Input for updating a product"""
+input UpdateProductInput {
+  name: String
+  slug: String
+  description: String
+  categoryId: UUID
+  isActive: Boolean
+}
+
+"""Input for creating a product variant"""
+input CreateProductVariantInput {
+  productId: UUID!
+  sku: String!
+  quantityInStock: Int
+}
+
+"""Input for updating a product variant"""
+input UpdateProductVariantInput {
+  sku: String
+  quantityInStock: Int
+}
+
+"""Input for variant attributes"""
+input ProductVariantAttributeInput {
+  attributeValueId: UUID!
+}
+
+"""Input for creating a collection"""
+input CreateCollectionInput {
+  name: String!
+  slug: String!
+  description: String
+}
+
+"""Input for updating a collection"""
+input UpdateCollectionInput {
+  name: String
+  slug: String
+  description: String
+  isActive: Boolean
+}
+
+"""Input for attribute creation"""
+input CreateAttributeInput {
+  name: String!
+}
+
+"""Input for attribute value creation"""
+input CreateAttributeValueInput {
+  attributeId: UUID!
+  value: String!
+}
+
+"""Response wrapper for category operations"""
+type CategoryResponse {
+  success: Boolean!
+  data: Category
+  error: ErrorResponse
+}
+
+"""Response wrapper for product operations"""
+type ProductResponse {
+  success: Boolean!
+  data: Product
+  error: ErrorResponse
+}
+
+"""Response wrapper for product variant operations"""
+type ProductVariantResponse {
+  success: Boolean!
+  data: ProductVariant
+  error: ErrorResponse
+}
+
+"""Response wrapper for collection operations"""
+type CollectionResponse {
+  success: Boolean!
+  data: Collection
+  error: ErrorResponse
+}
+
+"""Response wrapper for attribute operations"""
+type AttributeResponse {
+  success: Boolean!
+  data: Attribute
+  error: ErrorResponse
+}
+
+"""Extended Query for catalog"""
+extend type Query {
+  category(id: UUID!): Category
+  categories(first: Int, after: String): CategoryConnection!
+
+  product(id: UUID!): Product
+  products(first: Int, after: String, filter: ProductFilterInput): ProductConnection!
+  productBySlug(slug: String!): Product
+
+  collection(id: UUID!): Collection
+  collections(first: Int, after: String): CollectionConnection!
+
+  attribute(id: UUID!): Attribute
+  attributes(first: Int, after: String): [Attribute!]!
+
+  productVariant(id: UUID!): ProductVariant
+}
+
+"""Extended Mutation for catalog"""
+extend type Mutation {
+  createCategory(input: CreateCategoryInput!): CategoryResponse!
+  updateCategory(id: UUID!, input: UpdateCategoryInput!): CategoryResponse!
+  deleteCategory(id: UUID!): CategoryResponse!
+
+  createProduct(input: CreateProductInput!): ProductResponse!
+  updateProduct(id: UUID!, input: UpdateProductInput!): ProductResponse!
+  deleteProduct(id: UUID!): ProductResponse!
+
+  createProductVariant(input: CreateProductVariantInput!): ProductVariantResponse!
+  updateProductVariant(
+    id: UUID!
+    input: UpdateProductVariantInput!
+  ): ProductVariantResponse!
+  deleteProductVariant(id: UUID!): ProductVariantResponse!
+  addAttributeToVariant(
+    variantId: UUID!
+    attributeValueId: UUID!
+  ): ProductVariantResponse!
+  removeAttributeFromVariant(
+    variantId: UUID!
+    attributeValueId: UUID!
+  ): ProductVariantResponse!
+
+  createCollection(input: CreateCollectionInput!): CollectionResponse!
+  updateCollection(
+    id: UUID!
+    input: UpdateCollectionInput!
+  ): CollectionResponse!
+  deleteCollection(id: UUID!): CollectionResponse!
+  addProductToCollection(
+    collectionId: UUID!
+    productId: UUID!
+  ): CollectionResponse!
+  removeProductFromCollection(
+    collectionId: UUID!
+    productId: UUID!
+  ): CollectionResponse!
+
+  createAttribute(input: CreateAttributeInput!): AttributeResponse!
+  deleteAttribute(id: UUID!): AttributeResponse!
+  createAttributeValue(input: CreateAttributeValueInput!): AttributeResponse!
+  deleteAttributeValue(id: UUID!): AttributeResponse!
+}

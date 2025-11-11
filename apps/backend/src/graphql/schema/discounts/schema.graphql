@@ -1,0 +1,78 @@
+"""Discount/coupon code"""
+type Discount {
+  id: UUID!
+  code: String
+  type: DiscountType!
+  value: Decimal!
+  startDate: DateTime!
+  endDate: DateTime!
+  isActive: Boolean!
+  appliesTo: DiscountAppliesToType!
+  targetId: UUID
+  minOrderAmount: Decimal
+  maxDiscountAmount: Decimal
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Paginated discounts response"""
+type DiscountConnection {
+  edges: [DiscountEdge!]!
+  pageInfo: PageInfo!
+}
+
+type DiscountEdge {
+  cursor: String!
+  node: Discount!
+}
+
+"""Input for creating a discount"""
+input CreateDiscountInput {
+  code: String
+  type: DiscountType!
+  value: Decimal!
+  startDate: DateTime!
+  endDate: DateTime!
+  appliesTo: DiscountAppliesToType!
+  targetId: UUID
+  minOrderAmount: Decimal
+  maxDiscountAmount: Decimal
+}
+
+"""Input for updating a discount"""
+input UpdateDiscountInput {
+  code: String
+  type: DiscountType
+  value: Decimal
+  startDate: DateTime
+  endDate: DateTime
+  isActive: Boolean
+  appliesTo: DiscountAppliesToType
+  targetId: UUID
+  minOrderAmount: Decimal
+  maxDiscountAmount: Decimal
+}
+
+"""Response wrapper for discount operations"""
+type DiscountResponse {
+  success: Boolean!
+  data: Discount
+  error: ErrorResponse
+}
+
+"""Extended Query for discounts"""
+extend type Query {
+  discount(id: UUID!): Discount
+  discountByCode(code: String!): Discount
+  discounts(first: Int, after: String, isActive: Boolean): DiscountConnection!
+}
+
+"""Extended Mutation for discounts"""
+extend type Mutation {
+  createDiscount(input: CreateDiscountInput!): DiscountResponse!
+  updateDiscount(
+    id: UUID!
+    input: UpdateDiscountInput!
+  ): DiscountResponse!
+  deleteDiscount(id: UUID!): DiscountResponse!
+}

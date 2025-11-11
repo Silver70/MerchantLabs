@@ -1,0 +1,137 @@
+"""Region representing a geographical area with tax rules"""
+type Region {
+  id: UUID!
+  name: String!
+  countryCodes: [String!]!
+  taxRate: Decimal!
+  taxCode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Channel representing a store front with specific currency and region"""
+type Channel {
+  id: UUID!
+  name: String!
+  slug: String!
+  region: Region!
+  currencyCode: String!
+  taxInclusive: Boolean!
+  defaultLanguage: String
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Product pricing in a specific channel"""
+type ChannelProduct {
+  channelId: UUID!
+  productVariantId: UUID!
+  price: Decimal!
+  isVisible: Boolean!
+}
+
+"""Paginated regions response"""
+type RegionConnection {
+  edges: [RegionEdge!]!
+  pageInfo: PageInfo!
+}
+
+type RegionEdge {
+  cursor: String!
+  node: Region!
+}
+
+"""Paginated channels response"""
+type ChannelConnection {
+  edges: [ChannelEdge!]!
+  pageInfo: PageInfo!
+}
+
+type ChannelEdge {
+  cursor: String!
+  node: Channel!
+}
+
+"""Input for creating a region"""
+input CreateRegionInput {
+  name: String!
+  countryCodes: [String!]!
+  taxRate: Decimal!
+  taxCode: String
+}
+
+"""Input for updating a region"""
+input UpdateRegionInput {
+  name: String
+  countryCodes: [String!]
+  taxRate: Decimal
+  taxCode: String
+}
+
+"""Input for creating a channel"""
+input CreateChannelInput {
+  name: String!
+  slug: String!
+  regionId: UUID!
+  currencyCode: String!
+  taxInclusive: Boolean
+  defaultLanguage: String
+}
+
+"""Input for updating a channel"""
+input UpdateChannelInput {
+  name: String
+  slug: String
+  regionId: UUID
+  currencyCode: String
+  taxInclusive: Boolean
+  defaultLanguage: String
+  isActive: Boolean
+}
+
+"""Input for channel product pricing"""
+input ChannelProductPriceInput {
+  productVariantId: UUID!
+  price: Decimal!
+  isVisible: Boolean
+}
+
+"""Response wrapper for region operations"""
+type RegionResponse {
+  success: Boolean!
+  data: Region
+  error: ErrorResponse
+}
+
+"""Response wrapper for channel operations"""
+type ChannelResponse {
+  success: Boolean!
+  data: Channel
+  error: ErrorResponse
+}
+
+"""Extended Query for regions and channels"""
+extend type Query {
+  region(id: UUID!): Region
+  regions(first: Int, after: String): RegionConnection!
+
+  channel(id: UUID!): Channel
+  channels(first: Int, after: String): ChannelConnection!
+}
+
+"""Extended Mutation for regions and channels"""
+extend type Mutation {
+  createRegion(input: CreateRegionInput!): RegionResponse!
+  updateRegion(id: UUID!, input: UpdateRegionInput!): RegionResponse!
+  deleteRegion(id: UUID!): RegionResponse!
+
+  createChannel(input: CreateChannelInput!): ChannelResponse!
+  updateChannel(id: UUID!, input: UpdateChannelInput!): ChannelResponse!
+  deleteChannel(id: UUID!): ChannelResponse!
+
+  setChannelProductPrice(
+    channelId: UUID!
+    input: ChannelProductPriceInput!
+  ): ChannelResponse!
+}

@@ -1,0 +1,116 @@
+"""Media file (image, video, or file)"""
+type Media {
+  id: UUID!
+  url: String!
+  type: MediaType!
+  altText: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Media associated with a product"""
+type ProductMedia {
+  productId: UUID!
+  mediaId: UUID!
+  media: Media!
+  position: Int!
+  isPrimary: Boolean!
+}
+
+"""Media associated with a product variant"""
+type ProductVariantMedia {
+  productVariantId: UUID!
+  mediaId: UUID!
+  media: Media!
+  position: Int!
+  isPrimary: Boolean!
+}
+
+"""Paginated media response"""
+type MediaConnection {
+  edges: [MediaEdge!]!
+  pageInfo: PageInfo!
+}
+
+type MediaEdge {
+  cursor: String!
+  node: Media!
+}
+
+"""Input for uploading media"""
+input UploadMediaInput {
+  url: String!
+  type: MediaType!
+  altText: String
+}
+
+"""Input for updating media"""
+input UpdateMediaInput {
+  altText: String
+}
+
+"""Input for adding media to product"""
+input AddMediaToProductInput {
+  mediaId: UUID!
+  position: Int!
+  isPrimary: Boolean
+}
+
+"""Input for adding media to product variant"""
+input AddMediaToProductVariantInput {
+  mediaId: UUID!
+  position: Int!
+  isPrimary: Boolean
+}
+
+"""Response wrapper for media operations"""
+type MediaResponse {
+  success: Boolean!
+  data: Media
+  error: ErrorResponse
+}
+
+"""Response wrapper for product media operations"""
+type ProductMediaResponse {
+  success: Boolean!
+  data: ProductMedia
+  error: ErrorResponse
+}
+
+"""Response wrapper for variant media operations"""
+type ProductVariantMediaResponse {
+  success: Boolean!
+  data: ProductVariantMedia
+  error: ErrorResponse
+}
+
+"""Extended Query for media"""
+extend type Query {
+  media(id: UUID!): Media
+  mediaList(first: Int, after: String, type: MediaType): MediaConnection!
+}
+
+"""Extended Mutation for media"""
+extend type Mutation {
+  uploadMedia(input: UploadMediaInput!): MediaResponse!
+  updateMedia(id: UUID!, input: UpdateMediaInput!): MediaResponse!
+  deleteMedia(id: UUID!): MediaResponse!
+
+  addMediaToProduct(
+    productId: UUID!
+    input: AddMediaToProductInput!
+  ): ProductMediaResponse!
+  removeMediaFromProduct(
+    productId: UUID!
+    mediaId: UUID!
+  ): ProductMediaResponse!
+
+  addMediaToProductVariant(
+    productVariantId: UUID!
+    input: AddMediaToProductVariantInput!
+  ): ProductVariantMediaResponse!
+  removeMediaFromProductVariant(
+    productVariantId: UUID!
+    mediaId: UUID!
+  ): ProductVariantMediaResponse!
+}
