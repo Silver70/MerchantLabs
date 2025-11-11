@@ -3,7 +3,7 @@ import { db } from "../../../../../db/index";
 import { regionsTable } from "../../../../../db/schema/regions-channels";
 import { applyPagination } from "../../../../../lib/pagination";
 
-export const regions: NonNullable<QueryResolvers["regions"]> = async (
+export const regions: NonNullable<QueryResolvers['regions']> = async (
   _parent,
   args,
   _ctx

@@ -77,6 +77,15 @@ input UpdateAddressInput {
   country: String
 }
 
+input CustomerFilterInput {
+  search: String
+  email: String
+  firstName: String
+  lastName: String
+  createdAfter: DateTime
+  createdBefore: DateTime
+}
+
 type CustomerResponse {
   success: Boolean!
   data: Customer
@@ -89,9 +98,20 @@ type AddressResponse {
   error: ErrorResponse
 }
 
+type DeleteResponse {
+  success: Boolean!
+  error: ErrorResponse
+}
+
 extend type Query {
   customer(id: UUID!): Customer
-  customers(first: Int, after: String, email: String): CustomerConnection!
+  customers(
+    first: Int
+    after: String
+    filter: CustomerFilterInput
+  ): CustomerConnection!
+
+  searchCustomers(query: String!, first: Int, after: String): CustomerConnection!
 
   address(id: UUID!): Address
   addresses(
@@ -105,9 +125,9 @@ extend type Query {
 extend type Mutation {
   createCustomer(input: CreateCustomerInput!): CustomerResponse!
   updateCustomer(id: UUID!, input: UpdateCustomerInput!): CustomerResponse!
-  deleteCustomer(id: UUID!): CustomerResponse!
+  deleteCustomer(id: UUID!): DeleteResponse!
 
   createAddress(input: CreateAddressInput!): AddressResponse!
   updateAddress(id: UUID!, input: UpdateAddressInput!): AddressResponse!
-  deleteAddress(id: UUID!): AddressResponse!
+  deleteAddress(id: UUID!): DeleteResponse!
 }

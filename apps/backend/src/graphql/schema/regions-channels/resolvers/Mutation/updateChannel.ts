@@ -7,9 +7,7 @@ import {
 import { eq } from "drizzle-orm";
 import { generateSlug } from "../../../../../lib/slug";
 
-export const updateChannel: NonNullable<
-  MutationResolvers["updateChannel"]
-> = async (_parent, args, _ctx): Promise<any> => {
+export const updateChannel: NonNullable<MutationResolvers['updateChannel']> = async (_parent, args, _ctx): Promise<any> => {
   try {
     const updateData: Record<string, any> = {};
 

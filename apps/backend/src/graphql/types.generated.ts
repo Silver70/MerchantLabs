@@ -313,9 +313,24 @@ export type CustomerEdge = {
   node: Customer;
 };
 
+export type CustomerFilterInput = {
+  createdAfter?: InputMaybe<Scalars['DateTime']['input']>;
+  createdBefore?: InputMaybe<Scalars['DateTime']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type CustomerResponse = {
   __typename?: 'CustomerResponse';
   data?: Maybe<Customer>;
+  error?: Maybe<ErrorResponse>;
+  success: Scalars['Boolean']['output'];
+};
+
+export type DeleteResponse = {
+  __typename?: 'DeleteResponse';
   error?: Maybe<ErrorResponse>;
   success: Scalars['Boolean']['output'];
 };
@@ -429,13 +444,13 @@ export type Mutation = {
   createProduct: ProductResponse;
   createProductVariant: ProductVariantResponse;
   createRegion: RegionResponse;
-  deleteAddress: AddressResponse;
+  deleteAddress: DeleteResponse;
   deleteAttribute: AttributeResponse;
   deleteAttributeValue: AttributeResponse;
   deleteCategory: CategoryResponse;
   deleteChannel: ChannelResponse;
   deleteCollection: CollectionResponse;
-  deleteCustomer: CustomerResponse;
+  deleteCustomer: DeleteResponse;
   deleteDiscount: DiscountResponse;
   deleteMedia: MediaResponse;
   deleteOrder: OrderResponse;
@@ -924,6 +939,7 @@ export type Query = {
   products: ProductConnection;
   region?: Maybe<Region>;
   regions: RegionConnection;
+  searchCustomers: CustomerConnection;
 };
 
 
@@ -991,7 +1007,7 @@ export type QuerycustomerArgs = {
 
 export type QuerycustomersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  email?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<CustomerFilterInput>;
   first?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -1032,10 +1048,8 @@ export type QueryorderArgs = {
 
 export type QueryordersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  customerId?: InputMaybe<Scalars['UUID']['input']>;
   filter?: InputMaybe<OrderFilterInput>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  status?: InputMaybe<OrderStatus>;
 };
 
 
@@ -1056,11 +1070,8 @@ export type QueryproductVariantArgs = {
 
 export type QueryproductsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  categoryId?: InputMaybe<Scalars['UUID']['input']>;
-  collectionId?: InputMaybe<Scalars['UUID']['input']>;
   filter?: InputMaybe<ProductFilterInput>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  isActive?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -1072,6 +1083,13 @@ export type QueryregionArgs = {
 export type QueryregionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerysearchCustomersArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  query: Scalars['String']['input'];
 };
 
 export type Region = {
@@ -1313,9 +1331,11 @@ export type ResolversTypes = {
   Customer: ResolverTypeWrapper<Omit<Customer, 'addresses'> & { addresses: Array<ResolversTypes['Address']> }>;
   CustomerConnection: ResolverTypeWrapper<Omit<CustomerConnection, 'edges'> & { edges: Array<ResolversTypes['CustomerEdge']> }>;
   CustomerEdge: ResolverTypeWrapper<Omit<CustomerEdge, 'node'> & { node: ResolversTypes['Customer'] }>;
+  CustomerFilterInput: CustomerFilterInput;
   CustomerResponse: ResolverTypeWrapper<Omit<CustomerResponse, 'data'> & { data?: Maybe<ResolversTypes['Customer']> }>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
   Decimal: ResolverTypeWrapper<Scalars['Decimal']['output']>;
+  DeleteResponse: ResolverTypeWrapper<DeleteResponse>;
   Discount: ResolverTypeWrapper<Omit<Discount, 'appliesTo' | 'type'> & { appliesTo: ResolversTypes['DiscountAppliesToType'], type: ResolversTypes['DiscountType'] }>;
   DiscountAppliesToType: ResolverTypeWrapper<'ORDER' | 'PRODUCT' | 'CATEGORY'>;
   DiscountConnection: ResolverTypeWrapper<Omit<DiscountConnection, 'edges'> & { edges: Array<ResolversTypes['DiscountEdge']> }>;
@@ -1417,9 +1437,11 @@ export type ResolversParentTypes = {
   Customer: Omit<Customer, 'addresses'> & { addresses: Array<ResolversParentTypes['Address']> };
   CustomerConnection: Omit<CustomerConnection, 'edges'> & { edges: Array<ResolversParentTypes['CustomerEdge']> };
   CustomerEdge: Omit<CustomerEdge, 'node'> & { node: ResolversParentTypes['Customer'] };
+  CustomerFilterInput: CustomerFilterInput;
   CustomerResponse: Omit<CustomerResponse, 'data'> & { data?: Maybe<ResolversParentTypes['Customer']> };
   DateTime: Scalars['DateTime']['output'];
   Decimal: Scalars['Decimal']['output'];
+  DeleteResponse: DeleteResponse;
   Discount: Discount;
   DiscountConnection: Omit<DiscountConnection, 'edges'> & { edges: Array<ResolversParentTypes['DiscountEdge']> };
   DiscountEdge: Omit<DiscountEdge, 'node'> & { node: ResolversParentTypes['Discount'] };
@@ -1647,6 +1669,11 @@ export interface DecimalScalarConfig extends GraphQLScalarTypeConfig<ResolversTy
   name: 'Decimal';
 }
 
+export type DeleteResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteResponse'] = ResolversParentTypes['DeleteResponse']> = {
+  error?: Resolver<Maybe<ResolversTypes['ErrorResponse']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+};
+
 export type DiscountResolvers<ContextType = any, ParentType extends ResolversParentTypes['Discount'] = ResolversParentTypes['Discount']> = {
   appliesTo?: Resolver<ResolversTypes['DiscountAppliesToType'], ParentType, ContextType>;
   code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1738,13 +1765,13 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createProduct?: Resolver<ResolversTypes['ProductResponse'], ParentType, ContextType, RequireFields<MutationcreateProductArgs, 'input'>>;
   createProductVariant?: Resolver<ResolversTypes['ProductVariantResponse'], ParentType, ContextType, RequireFields<MutationcreateProductVariantArgs, 'input'>>;
   createRegion?: Resolver<ResolversTypes['RegionResponse'], ParentType, ContextType, RequireFields<MutationcreateRegionArgs, 'input'>>;
-  deleteAddress?: Resolver<ResolversTypes['AddressResponse'], ParentType, ContextType, RequireFields<MutationdeleteAddressArgs, 'id'>>;
+  deleteAddress?: Resolver<ResolversTypes['DeleteResponse'], ParentType, ContextType, RequireFields<MutationdeleteAddressArgs, 'id'>>;
   deleteAttribute?: Resolver<ResolversTypes['AttributeResponse'], ParentType, ContextType, RequireFields<MutationdeleteAttributeArgs, 'id'>>;
   deleteAttributeValue?: Resolver<ResolversTypes['AttributeResponse'], ParentType, ContextType, RequireFields<MutationdeleteAttributeValueArgs, 'id'>>;
   deleteCategory?: Resolver<ResolversTypes['CategoryResponse'], ParentType, ContextType, RequireFields<MutationdeleteCategoryArgs, 'id'>>;
   deleteChannel?: Resolver<ResolversTypes['ChannelResponse'], ParentType, ContextType, RequireFields<MutationdeleteChannelArgs, 'id'>>;
   deleteCollection?: Resolver<ResolversTypes['CollectionResponse'], ParentType, ContextType, RequireFields<MutationdeleteCollectionArgs, 'id'>>;
-  deleteCustomer?: Resolver<ResolversTypes['CustomerResponse'], ParentType, ContextType, RequireFields<MutationdeleteCustomerArgs, 'id'>>;
+  deleteCustomer?: Resolver<ResolversTypes['DeleteResponse'], ParentType, ContextType, RequireFields<MutationdeleteCustomerArgs, 'id'>>;
   deleteDiscount?: Resolver<ResolversTypes['DiscountResponse'], ParentType, ContextType, RequireFields<MutationdeleteDiscountArgs, 'id'>>;
   deleteMedia?: Resolver<ResolversTypes['MediaResponse'], ParentType, ContextType, RequireFields<MutationdeleteMediaArgs, 'id'>>;
   deleteOrder?: Resolver<ResolversTypes['OrderResponse'], ParentType, ContextType, RequireFields<MutationdeleteOrderArgs, 'id'>>;
@@ -1931,6 +1958,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   products?: Resolver<ResolversTypes['ProductConnection'], ParentType, ContextType, Partial<QueryproductsArgs>>;
   region?: Resolver<Maybe<ResolversTypes['Region']>, ParentType, ContextType, RequireFields<QueryregionArgs, 'id'>>;
   regions?: Resolver<ResolversTypes['RegionConnection'], ParentType, ContextType, Partial<QueryregionsArgs>>;
+  searchCustomers?: Resolver<ResolversTypes['CustomerConnection'], ParentType, ContextType, RequireFields<QuerysearchCustomersArgs, 'query'>>;
 };
 
 export type RegionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Region'] = ResolversParentTypes['Region']> = {
@@ -1993,6 +2021,7 @@ export type Resolvers<ContextType = any> = {
   CustomerResponse?: CustomerResponseResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Decimal?: GraphQLScalarType;
+  DeleteResponse?: DeleteResponseResolvers<ContextType>;
   Discount?: DiscountResolvers<ContextType>;
   DiscountAppliesToType?: DiscountAppliesToTypeResolvers;
   DiscountConnection?: DiscountConnectionResolvers<ContextType>;

@@ -6,9 +6,7 @@ import {
 } from "../../../../../db/schema/regions-channels";
 import { eq, and } from "drizzle-orm";
 
-export const setChannelProductPrice: NonNullable<
-  MutationResolvers["setChannelProductPrice"]
-> = async (_parent, args, _ctx): Promise<any> => {
+export const setChannelProductPrice: NonNullable<MutationResolvers['setChannelProductPrice']> = async (_parent, args, _ctx): Promise<any> => {
   try {
     // Validate channel exists
     const channel = await db.query.channelsTable.findFirst({

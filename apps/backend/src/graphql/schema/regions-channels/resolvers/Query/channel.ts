@@ -3,7 +3,7 @@ import { db } from "../../../../../db/index";
 import { channelsTable } from "../../../../../db/schema/regions-channels";
 import { eq } from "drizzle-orm";
 
-export const channel: NonNullable<QueryResolvers["channel"]> = async (
+export const channel: NonNullable<QueryResolvers['channel']> = async (
   _parent,
   args,
   _ctx

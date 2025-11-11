@@ -3,7 +3,7 @@ import { db } from "../../../../../db/index";
 import { regionsTable } from "../../../../../db/schema/regions-channels";
 import { eq } from "drizzle-orm";
 
-export const region: NonNullable<QueryResolvers["region"]> = async (
+export const region: NonNullable<QueryResolvers['region']> = async (
   _parent,
   args,
   _ctx

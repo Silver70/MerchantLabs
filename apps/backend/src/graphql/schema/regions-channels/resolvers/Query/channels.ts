@@ -2,7 +2,7 @@ import type { QueryResolvers } from "../../../../types.generated";
 import { db } from "../../../../../db/index";
 import { applyPagination } from "../../../../../lib/pagination";
 
-export const channels: NonNullable<QueryResolvers["channels"]> = async (
+export const channels: NonNullable<QueryResolvers['channels']> = async (
   _parent,
   args,
   _ctx

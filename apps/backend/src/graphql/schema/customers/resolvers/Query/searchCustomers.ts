@@ -1,58 +1,45 @@
 import type { QueryResolvers } from "../../../../types.generated";
 import { db } from "../../../../../db/index";
-import { and, eq, like, desc, gte, lte } from "drizzle-orm";
+import { or, like, desc } from "drizzle-orm";
 import { customersTable } from "../../../../../db/schema/customers";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
 
-export const customers: NonNullable<QueryResolvers['customers']> = async (
+export const searchCustomers: NonNullable<QueryResolvers['searchCustomers']> = async (
   _parent,
   args,
   _ctx
 ): Promise<any> => {
   try {
     const pageSize = Math.min(args.first || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
-    const filter = args.filter;
+    const searchQuery = args.query.trim();
 
-    // Build filter conditions
-    const conditions = [];
-
-    if (filter?.email) {
-      conditions.push(like(customersTable.email, `%${filter.email}%`));
+    if (!searchQuery) {
+      return {
+        edges: [],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: null,
+          endCursor: null,
+          totalCount: 0,
+        },
+      };
     }
-
-    if (filter?.firstName) {
-      conditions.push(like(customersTable.firstName, `%${filter.firstName}%`));
-    }
-
-    if (filter?.lastName) {
-      conditions.push(like(customersTable.lastName, `%${filter.lastName}%`));
-    }
-
-    if (filter?.search) {
-      conditions.push(
-        like(customersTable.email, `%${filter.search}%`)
-      );
-    }
-
-    if (filter?.createdAfter) {
-      conditions.push(gte(customersTable.createdAt, filter.createdAfter));
-    }
-
-    if (filter?.createdBefore) {
-      conditions.push(lte(customersTable.createdAt, filter.createdBefore));
-    }
-
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     const allCustomers = await db.query.customersTable.findMany({
-      where: whereClause,
+      where: or(
+        like(customersTable.email, `%${searchQuery}%`),
+        like(customersTable.firstName, `%${searchQuery}%`),
+        like(customersTable.lastName, `%${searchQuery}%`),
+        like(customersTable.phone, `%${searchQuery}%`)
+      ),
       with: {
         addresses: true,
       },
       orderBy: desc(customersTable.createdAt),
-      limit: pageSize + 1, // Fetch one extra to determine hasNextPage
+      limit: pageSize + 1,
     });
 
     const hasNextPage = allCustomers.length > pageSize;
@@ -81,7 +68,7 @@ export const customers: NonNullable<QueryResolvers['customers']> = async (
       },
     };
   } catch (error) {
-    console.error("Error fetching customers:", error);
+    console.error("Error searching customers:", error);
     return {
       edges: [],
       pageInfo: {

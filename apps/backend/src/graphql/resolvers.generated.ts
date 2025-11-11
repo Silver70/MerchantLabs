@@ -26,6 +26,7 @@ import    { productVariant as Query_productVariant } from './schema/catalog/reso
 import    { products as Query_products } from './schema/catalog/resolvers/Query/products';
 import    { region as Query_region } from './schema/regions-channels/resolvers/Query/region';
 import    { regions as Query_regions } from './schema/regions-channels/resolvers/Query/regions';
+import    { searchCustomers as Query_searchCustomers } from './schema/customers/resolvers/Query/searchCustomers';
 import    { _empty as Mutation__empty } from './schema/base/resolvers/Mutation/_empty';
 import    { addAttributeToVariant as Mutation_addAttributeToVariant } from './schema/catalog/resolvers/Mutation/addAttributeToVariant';
 import    { addMediaToProduct as Mutation_addMediaToProduct } from './schema/media/resolvers/Mutation/addMediaToProduct';
@@ -97,6 +98,7 @@ import    { Customer } from './schema/customers/resolvers/Customer';
 import    { CustomerConnection } from './schema/customers/resolvers/CustomerConnection';
 import    { CustomerEdge } from './schema/customers/resolvers/CustomerEdge';
 import    { CustomerResponse } from './schema/customers/resolvers/CustomerResponse';
+import    { DeleteResponse } from './schema/customers/resolvers/DeleteResponse';
 import    { Discount } from './schema/discounts/resolvers/Discount';
 import    { DiscountConnection } from './schema/discounts/resolvers/DiscountConnection';
 import    { DiscountEdge } from './schema/discounts/resolvers/DiscountEdge';
@@ -132,7 +134,7 @@ import    { DateTime } from './schema/base/resolvers/DateTime';
 import    { Decimal } from './schema/base/resolvers/Decimal';
 import    { UUID } from './schema/base/resolvers/UUID';
     export const resolvers: Resolvers = {
-      Query: { _empty: Query__empty,address: Query_address,addresses: Query_addresses,attribute: Query_attribute,attributes: Query_attributes,categories: Query_categories,category: Query_category,channel: Query_channel,channels: Query_channels,collection: Query_collection,collections: Query_collections,customer: Query_customer,customers: Query_customers,discount: Query_discount,discountByCode: Query_discountByCode,discounts: Query_discounts,media: Query_media,mediaList: Query_mediaList,order: Query_order,orders: Query_orders,product: Query_product,productBySlug: Query_productBySlug,productVariant: Query_productVariant,products: Query_products,region: Query_region,regions: Query_regions },
+      Query: { _empty: Query__empty,address: Query_address,addresses: Query_addresses,attribute: Query_attribute,attributes: Query_attributes,categories: Query_categories,category: Query_category,channel: Query_channel,channels: Query_channels,collection: Query_collection,collections: Query_collections,customer: Query_customer,customers: Query_customers,discount: Query_discount,discountByCode: Query_discountByCode,discounts: Query_discounts,media: Query_media,mediaList: Query_mediaList,order: Query_order,orders: Query_orders,product: Query_product,productBySlug: Query_productBySlug,productVariant: Query_productVariant,products: Query_products,region: Query_region,regions: Query_regions,searchCustomers: Query_searchCustomers },
       Mutation: { _empty: Mutation__empty,addAttributeToVariant: Mutation_addAttributeToVariant,addMediaToProduct: Mutation_addMediaToProduct,addMediaToProductVariant: Mutation_addMediaToProductVariant,addProductToCollection: Mutation_addProductToCollection,createAddress: Mutation_createAddress,createAttribute: Mutation_createAttribute,createAttributeValue: Mutation_createAttributeValue,createCategory: Mutation_createCategory,createChannel: Mutation_createChannel,createCollection: Mutation_createCollection,createCustomer: Mutation_createCustomer,createDiscount: Mutation_createDiscount,createOrder: Mutation_createOrder,createProduct: Mutation_createProduct,createProductVariant: Mutation_createProductVariant,createRegion: Mutation_createRegion,deleteAddress: Mutation_deleteAddress,deleteAttribute: Mutation_deleteAttribute,deleteAttributeValue: Mutation_deleteAttributeValue,deleteCategory: Mutation_deleteCategory,deleteChannel: Mutation_deleteChannel,deleteCollection: Mutation_deleteCollection,deleteCustomer: Mutation_deleteCustomer,deleteDiscount: Mutation_deleteDiscount,deleteMedia: Mutation_deleteMedia,deleteOrder: Mutation_deleteOrder,deleteProduct: Mutation_deleteProduct,deleteProductVariant: Mutation_deleteProductVariant,deleteRegion: Mutation_deleteRegion,removeAttributeFromVariant: Mutation_removeAttributeFromVariant,removeMediaFromProduct: Mutation_removeMediaFromProduct,removeMediaFromProductVariant: Mutation_removeMediaFromProductVariant,removeProductFromCollection: Mutation_removeProductFromCollection,setChannelProductPrice: Mutation_setChannelProductPrice,updateAddress: Mutation_updateAddress,updateCategory: Mutation_updateCategory,updateChannel: Mutation_updateChannel,updateCollection: Mutation_updateCollection,updateCustomer: Mutation_updateCustomer,updateDiscount: Mutation_updateDiscount,updateMedia: Mutation_updateMedia,updateOrderStatus: Mutation_updateOrderStatus,updateProduct: Mutation_updateProduct,updateProductVariant: Mutation_updateProductVariant,updateRegion: Mutation_updateRegion,uploadMedia: Mutation_uploadMedia },
       
       Address: Address,
@@ -159,6 +161,7 @@ Customer: Customer,
 CustomerConnection: CustomerConnection,
 CustomerEdge: CustomerEdge,
 CustomerResponse: CustomerResponse,
+DeleteResponse: DeleteResponse,
 Discount: Discount,
 DiscountConnection: DiscountConnection,
 DiscountEdge: DiscountEdge,

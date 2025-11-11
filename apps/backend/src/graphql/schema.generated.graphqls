@@ -268,6 +268,15 @@ type CustomerEdge {
   node: Customer!
 }
 
+input CustomerFilterInput {
+  createdAfter: DateTime
+  createdBefore: DateTime
+  email: String
+  firstName: String
+  lastName: String
+  search: String
+}
+
 type CustomerResponse {
   data: Customer
   error: ErrorResponse
@@ -277,6 +286,11 @@ type CustomerResponse {
 scalar DateTime
 
 scalar Decimal
+
+type DeleteResponse {
+  error: ErrorResponse
+  success: Boolean!
+}
 
 type Discount {
   appliesTo: DiscountAppliesToType!
@@ -380,13 +394,13 @@ type Mutation {
   createProduct(input: CreateProductInput!): ProductResponse!
   createProductVariant(input: CreateProductVariantInput!): ProductVariantResponse!
   createRegion(input: CreateRegionInput!): RegionResponse!
-  deleteAddress(id: UUID!): AddressResponse!
+  deleteAddress(id: UUID!): DeleteResponse!
   deleteAttribute(id: UUID!): AttributeResponse!
   deleteAttributeValue(id: UUID!): AttributeResponse!
   deleteCategory(id: UUID!): CategoryResponse!
   deleteChannel(id: UUID!): ChannelResponse!
   deleteCollection(id: UUID!): CollectionResponse!
-  deleteCustomer(id: UUID!): CustomerResponse!
+  deleteCustomer(id: UUID!): DeleteResponse!
   deleteDiscount(id: UUID!): DiscountResponse!
   deleteMedia(id: UUID!): MediaResponse!
   deleteOrder(id: UUID!): OrderResponse!
@@ -593,20 +607,21 @@ type Query {
   collection(id: UUID!): Collection
   collections(after: String, first: Int): CollectionConnection!
   customer(id: UUID!): Customer
-  customers(after: String, email: String, first: Int): CustomerConnection!
+  customers(after: String, filter: CustomerFilterInput, first: Int): CustomerConnection!
   discount(id: UUID!): Discount
   discountByCode(code: String!): Discount
   discounts(after: String, first: Int, isActive: Boolean): DiscountConnection!
   media(id: UUID!): Media
   mediaList(after: String, first: Int, type: MediaType): MediaConnection!
   order(id: UUID!): Order
-  orders(after: String, customerId: UUID, filter: OrderFilterInput, first: Int, status: OrderStatus): OrderConnection!
+  orders(after: String, filter: OrderFilterInput, first: Int): OrderConnection!
   product(id: UUID!): Product
   productBySlug(slug: String!): Product
   productVariant(id: UUID!): ProductVariant
-  products(after: String, categoryId: UUID, collectionId: UUID, filter: ProductFilterInput, first: Int, isActive: Boolean): ProductConnection!
+  products(after: String, filter: ProductFilterInput, first: Int): ProductConnection!
   region(id: UUID!): Region
   regions(after: String, first: Int): RegionConnection!
+  searchCustomers(after: String, first: Int, query: String!): CustomerConnection!
 }
 
 type Region {

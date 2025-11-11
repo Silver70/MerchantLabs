@@ -3,9 +3,7 @@ import { db } from "../../../../../db/index";
 import { regionsTable } from "../../../../../db/schema/regions-channels";
 import { eq } from "drizzle-orm";
 
-export const updateRegion: NonNullable<
-  MutationResolvers["updateRegion"]
-> = async (_parent, args, _ctx) => {
+export const updateRegion: NonNullable<MutationResolvers['updateRegion']> = async (_parent, args, _ctx) => {
   try {
     const updateData: Record<string, any> = {};
 

@@ -2,9 +2,7 @@ import type { MutationResolvers } from "../../../../types.generated";
 import { db } from "../../../../../db/index";
 import { regionsTable } from "../../../../../db/schema/regions-channels";
 
-export const createRegion: NonNullable<
-  MutationResolvers["createRegion"]
-> = async (_parent, args, _ctx) => {
+export const createRegion: NonNullable<MutationResolvers['createRegion']> = async (_parent, args, _ctx) => {
   try {
     const newRegionArray = await db
       .insert(regionsTable)

@@ -3,9 +3,7 @@ import { db } from "../../../../../db/index";
 import { channelsTable } from "../../../../../db/schema/regions-channels";
 import { eq } from "drizzle-orm";
 
-export const deleteChannel: NonNullable<
-  MutationResolvers["deleteChannel"]
-> = async (_parent, args, _ctx): Promise<any> => {
+export const deleteChannel: NonNullable<MutationResolvers['deleteChannel']> = async (_parent, args, _ctx): Promise<any> => {
   try {
     const deletedChannelArray = await db
       .delete(channelsTable)
