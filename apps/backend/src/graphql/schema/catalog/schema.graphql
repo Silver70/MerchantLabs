@@ -121,7 +121,7 @@ input UpdateProductInput {
 
 input CreateProductVariantInput {
   productId: UUID!
-  sku: String!
+  attributeValueIds: [UUID!]!
   quantityInStock: Int
 }
 

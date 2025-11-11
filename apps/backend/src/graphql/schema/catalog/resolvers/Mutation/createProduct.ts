@@ -1,25 +1,26 @@
-import type { MutationResolvers } from './../../../../types.generated';
+import type { MutationResolvers } from "./../../../../types.generated";
 import { db } from "../../../../../db/index";
 import { productsTable } from "../../../../../db/schema/catalog";
+import { generateSlug } from "../../../../../lib/slug";
 
-export const createProduct: NonNullable<MutationResolvers['createProduct']> = async (
-  _parent,
-  args,
-  _ctx
-) => {
+export const createProduct: NonNullable<MutationResolvers['createProduct']> = async (_parent, args, _ctx) => {
   try {
+    const slug = generateSlug(args.input.name);
+
     const newProductArray = await db
       .insert(productsTable)
       .values({
         name: args.input.name,
-        slug: args.input.slug,
+        slug: slug,
         description: args.input.description || null,
         categoryId: args.input.categoryId,
         isActive: true,
       })
       .returning();
 
-    const newProduct = Array.isArray(newProductArray) ? newProductArray[0] : null;
+    const newProduct = Array.isArray(newProductArray)
+      ? newProductArray[0]
+      : null;
 
     return {
       success: !!newProduct,
@@ -27,13 +28,14 @@ export const createProduct: NonNullable<MutationResolvers['createProduct']> = as
       error: null,
     };
   } catch (error) {
-    console.error('Error creating product:', error);
+    console.error("Error creating product:", error);
     return {
       success: false,
       data: null,
       error: {
-        code: 'PRODUCT_CREATE_ERROR',
-        message: error instanceof Error ? error.message : 'Failed to create product',
+        code: "PRODUCT_CREATE_ERROR",
+        message:
+          error instanceof Error ? error.message : "Failed to create product",
       } as any,
     };
   }

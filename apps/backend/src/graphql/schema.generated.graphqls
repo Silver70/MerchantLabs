@@ -235,9 +235,9 @@ input CreateProductInput {
 }
 
 input CreateProductVariantInput {
+  attributeValueIds: [UUID!]!
   productId: UUID!
   quantityInStock: Int
-  sku: String!
 }
 
 input CreateRegionInput {

@@ -1,4 +1,5 @@
-import type   { ChannelProductResolvers } from './../../../types.generated';
-    export const ChannelProduct: ChannelProductResolvers = {
-    /* Implement ChannelProduct resolver logic here */
-  };
+import type { ChannelProductResolvers } from "../../../types.generated";
+
+export const ChannelProduct: ChannelProductResolvers = {
+  /* No custom resolvers needed - all fields are scalars */
+};
