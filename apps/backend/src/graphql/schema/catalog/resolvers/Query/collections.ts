@@ -16,18 +16,6 @@ export const collections: NonNullable<QueryResolvers['collections']> = async (
 
     const allCollections = await db.query.collectionsTable.findMany({
       where: eq(collectionsTable.isActive, true),
-      with: {
-        products: {
-          with: {
-            category: true,
-            variants: {
-              with: {
-                attributes: true,
-              },
-            },
-          },
-        },
-      },
       orderBy: desc(collectionsTable.createdAt),
       limit: pageSize + 1, // Fetch one extra to determine hasNextPage
     });

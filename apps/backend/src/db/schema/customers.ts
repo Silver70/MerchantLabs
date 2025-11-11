@@ -1,4 +1,5 @@
 import { pgTable, uuid, text, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 export const customersTable = pgTable("customers", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -33,3 +34,15 @@ export const addressesTable = pgTable("addresses", {
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
+
+// Relations
+export const customersRelations = relations(customersTable, ({ many }) => ({
+  addresses: many(addressesTable),
+}));
+
+export const addressesRelations = relations(addressesTable, ({ one }) => ({
+  customer: one(customersTable, {
+    fields: [addressesTable.customerId],
+    references: [customersTable.id],
+  }),
+}));

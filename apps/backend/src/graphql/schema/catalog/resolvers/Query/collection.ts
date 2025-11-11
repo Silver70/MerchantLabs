@@ -11,18 +11,6 @@ export const collection: NonNullable<QueryResolvers['collection']> = async (
   try {
     const collectionData = await db.query.collectionsTable.findFirst({
       where: eq(collectionsTable.id, args.id),
-      with: {
-        products: {
-          with: {
-            category: true,
-            variants: {
-              with: {
-                attributes: true,
-              },
-            },
-          },
-        },
-      },
     });
 
     return collectionData as any;

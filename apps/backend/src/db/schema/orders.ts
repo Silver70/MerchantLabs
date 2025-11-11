@@ -7,6 +7,7 @@ import {
   numeric,
   integer,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 export const orderStatusEnum = pgEnum("order_status", [
   "pending",
@@ -77,3 +78,19 @@ export const orderItemsTable = pgTable("order_items", {
     scale: 2,
   }).notNull(),
 });
+
+// Relations
+export const ordersRelations = relations(ordersTable, ({ many }) => ({
+  items: many(orderItemsTable),
+}));
+
+export const orderItemsRelations = relations(orderItemsTable, ({ one }) => ({
+  order: one(ordersTable, {
+    fields: [orderItemsTable.orderId],
+    references: [ordersTable.id],
+  }),
+  productVariant: one(require("./catalog").productVariantsTable, {
+    fields: [orderItemsTable.productVariantId],
+    references: [require("./catalog").productVariantsTable.id],
+  }),
+}));

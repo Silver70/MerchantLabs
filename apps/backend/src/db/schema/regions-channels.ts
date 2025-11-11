@@ -8,7 +8,7 @@ import {
   char,
   primaryKey,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 
 export const regionsTable = pgTable("regions", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -53,5 +53,28 @@ export const channelProductsTable = pgTable(
   },
   (table) => ({
     pk: primaryKey({ columns: [table.channelId, table.productVariantId] }),
+  })
+);
+
+// Relations
+export const regionsRelations = relations(regionsTable, ({ many }) => ({
+  channels: many(channelsTable),
+}));
+
+export const channelsRelations = relations(channelsTable, ({ one, many }) => ({
+  region: one(regionsTable, {
+    fields: [channelsTable.regionId],
+    references: [regionsTable.id],
+  }),
+  products: many(channelProductsTable),
+}));
+
+export const channelProductsRelations = relations(
+  channelProductsTable,
+  ({ one }) => ({
+    channel: one(channelsTable, {
+      fields: [channelProductsTable.channelId],
+      references: [channelsTable.id],
+    }),
   })
 );

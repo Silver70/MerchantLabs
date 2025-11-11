@@ -14,12 +14,7 @@ export const order: NonNullable<QueryResolvers['order']> = async (
       with: {
         items: {
           with: {
-            productVariant: {
-              with: {
-                product: true,
-                attributes: true,
-              },
-            },
+            productVariant: true,
           },
         },
       },

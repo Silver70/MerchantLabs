@@ -7,6 +7,7 @@ import {
   integer,
   primaryKey,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 //@ts-ignore
 export const categoriesTable = pgTable("categories", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -107,5 +108,84 @@ export const collectionProductsTable = pgTable(
   },
   (table) => ({
     pk: primaryKey({ columns: [table.collectionId, table.productId] }),
+  })
+);
+
+// Relations
+export const categoriesRelations = relations(categoriesTable, ({ one, many }) => ({
+  parent: one(categoriesTable, {
+    fields: [categoriesTable.parentId],
+    references: [categoriesTable.id],
+    relationName: "parent_children",
+  }),
+  children: many(categoriesTable, {
+    relationName: "parent_children",
+  }),
+  products: many(productsTable),
+}));
+
+export const productsRelations = relations(productsTable, ({ one, many }) => ({
+  category: one(categoriesTable, {
+    fields: [productsTable.categoryId],
+    references: [categoriesTable.id],
+  }),
+  variants: many(productVariantsTable),
+}));
+
+export const productVariantsRelations = relations(
+  productVariantsTable,
+  ({ one, many }) => ({
+    product: one(productsTable, {
+      fields: [productVariantsTable.productId],
+      references: [productsTable.id],
+    }),
+    attributes: many(productVariantAttributesTable),
+  })
+);
+
+export const attributesRelations = relations(attributesTable, ({ many }) => ({
+  values: many(attributeValuesTable),
+}));
+
+export const attributeValuesRelations = relations(
+  attributeValuesTable,
+  ({ one, many }) => ({
+    attribute: one(attributesTable, {
+      fields: [attributeValuesTable.attributeId],
+      references: [attributesTable.id],
+    }),
+    productVariants: many(productVariantAttributesTable),
+  })
+);
+
+export const productVariantAttributesRelations = relations(
+  productVariantAttributesTable,
+  ({ one }) => ({
+    productVariant: one(productVariantsTable, {
+      fields: [productVariantAttributesTable.productVariantId],
+      references: [productVariantsTable.id],
+    }),
+    attributeValue: one(attributeValuesTable, {
+      fields: [productVariantAttributesTable.attributeValueId],
+      references: [attributeValuesTable.id],
+    }),
+  })
+);
+
+export const collectionsRelations = relations(collectionsTable, ({ many }) => ({
+  collectionProducts: many(collectionProductsTable),
+}));
+
+export const collectionProductsRelations = relations(
+  collectionProductsTable,
+  ({ one }) => ({
+    collection: one(collectionsTable, {
+      fields: [collectionProductsTable.collectionId],
+      references: [collectionsTable.id],
+    }),
+    product: one(productsTable, {
+      fields: [collectionProductsTable.productId],
+      references: [productsTable.id],
+    }),
   })
 );
