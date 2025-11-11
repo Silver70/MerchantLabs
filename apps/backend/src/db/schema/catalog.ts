@@ -7,11 +7,12 @@ import {
   integer,
   primaryKey,
 } from "drizzle-orm/pg-core";
-
+//@ts-ignore
 export const categoriesTable = pgTable("categories", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
+  //@ts-ignore
   parentId: uuid("parent_id").references(() => categoriesTable.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
