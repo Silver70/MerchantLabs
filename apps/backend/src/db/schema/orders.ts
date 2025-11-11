@@ -80,7 +80,31 @@ export const orderItemsTable = pgTable("order_items", {
 });
 
 // Relations
-export const ordersRelations = relations(ordersTable, ({ many }) => ({
+export const ordersRelations = relations(ordersTable, ({ one, many }) => ({
+  customer: one(require("./customers").customersTable, {
+    fields: [ordersTable.customerId],
+    references: [require("./customers").customersTable.id],
+  }),
+  channel: one(require("./regions-channels").channelsTable, {
+    fields: [ordersTable.channelId],
+    references: [require("./regions-channels").channelsTable.id],
+  }),
+  shippingAddress: one(require("./customers").addressesTable, {
+    fields: [ordersTable.shippingAddressId],
+    references: [require("./customers").addressesTable.id],
+  }),
+  billingAddress: one(require("./customers").addressesTable, {
+    fields: [ordersTable.billingAddressId],
+    references: [require("./customers").addressesTable.id],
+  }),
+  discount: one(require("./discounts").discountsTable, {
+    fields: [ordersTable.discountId],
+    references: [require("./discounts").discountsTable.id],
+  }),
+  region: one(require("./regions-channels").regionsTable, {
+    fields: [ordersTable.regionId],
+    references: [require("./regions-channels").regionsTable.id],
+  }),
   items: many(orderItemsTable),
 }));
 

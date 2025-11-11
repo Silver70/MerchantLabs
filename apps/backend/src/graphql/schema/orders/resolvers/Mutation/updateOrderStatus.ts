@@ -3,9 +3,7 @@ import { db } from "../../../../../db/index";
 import { eq } from "drizzle-orm";
 import { ordersTable } from "../../../../../db/schema/orders";
 
-export const updateOrderStatus: NonNullable<
-  MutationResolvers["updateOrderStatus"]
-> = async (_parent, args, _ctx): Promise<any> => {
+export const updateOrderStatus: NonNullable<MutationResolvers['updateOrderStatus']> = async (_parent, args, _ctx): Promise<any> => {
   // Returns OrderResponse type
   try {
     const result = await db

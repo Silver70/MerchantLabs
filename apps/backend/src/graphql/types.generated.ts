@@ -273,7 +273,6 @@ export type CreateProductInput = {
   categoryId: Scalars['UUID']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
-  slug: Scalars['String']['input'];
 };
 
 export type CreateProductVariantInput = {
@@ -382,12 +381,14 @@ export type DiscountType =
 
 export type Error = {
   code: Scalars['String']['output'];
+  details?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
 };
 
 export type ErrorResponse = Error & {
   __typename?: 'ErrorResponse';
   code: Scalars['String']['output'];
+  details?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
 };
 
@@ -1716,6 +1717,7 @@ export type ErrorResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type ErrorResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ErrorResponse'] = ResolversParentTypes['ErrorResponse']> = {
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  details?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

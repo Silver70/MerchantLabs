@@ -231,7 +231,6 @@ input CreateProductInput {
   categoryId: UUID!
   description: String
   name: String!
-  slug: String!
 }
 
 input CreateProductVariantInput {
@@ -337,11 +336,13 @@ enum DiscountType {
 
 interface Error {
   code: String!
+  details: String
   message: String!
 }
 
 type ErrorResponse implements Error {
   code: String!
+  details: String
   message: String!
 }
 

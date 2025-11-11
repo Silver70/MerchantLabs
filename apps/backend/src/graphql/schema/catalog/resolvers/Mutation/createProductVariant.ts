@@ -94,6 +94,7 @@ export const createProductVariant: NonNullable<MutationResolvers['createProductV
         error: {
           code: "VARIANT_CREATE_ERROR",
           message: `Failed to create some variants. ${result.failedCount} of ${result.failedCount + result.createdCount} failed.`,
+          details: result.errors?.join(", ") || "Unknown error",
         } as any,
       };
     }

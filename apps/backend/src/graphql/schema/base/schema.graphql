@@ -39,11 +39,13 @@ enum OrderStatus {
 interface Error {
   message: String!
   code: String!
+  details: String
 }
 
 type ErrorResponse implements Error {
   message: String!
   code: String!
+  details: String
 }
 
 type PageInfo {

@@ -68,11 +68,11 @@ export const bulkCreateVariants = async (
       });
     } catch (error) {
       failedCount++;
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       errors.push(
-        `Failed to create variant with SKU ${variant.sku}: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
+        `Failed to create variant with SKU ${variant.sku}: ${errorMessage}`
       );
+      console.error(`Variant creation error for SKU ${variant.sku}:`, error);
     }
   }
 
