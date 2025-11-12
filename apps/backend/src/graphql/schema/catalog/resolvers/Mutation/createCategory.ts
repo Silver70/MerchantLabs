@@ -1,6 +1,7 @@
 import type { MutationResolvers } from './../../../../types.generated';
 import { db } from "../../../../../db/index";
 import { categoriesTable } from "../../../../../db/schema/catalog";
+import { generateSlug } from "../../../../../lib/slug";
 
 export const createCategory: NonNullable<MutationResolvers['createCategory']> = async (
   _parent,
@@ -8,11 +9,13 @@ export const createCategory: NonNullable<MutationResolvers['createCategory']> = 
   _ctx
 ) => {
   try {
+    const slug = args.input.slug || generateSlug(args.input.name);
+
     const newCategoryArray = await db
       .insert(categoriesTable)
       .values({
         name: args.input.name,
-        slug: args.input.slug,
+        slug,
         parentId: args.input.parentId || null,
       })
       .returning();

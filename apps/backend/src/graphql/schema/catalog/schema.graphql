@@ -94,7 +94,7 @@ input ProductFilterInput {
 
 input CreateCategoryInput {
   name: String!
-  slug: String!
+  slug: String
   parentId: UUID
 }
 

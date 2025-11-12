@@ -5,6 +5,7 @@
 ### Queries
 
 #### Get Single Customer
+
 ```graphql
 query GetCustomer($id: UUID!) {
   customer(id: $id) {
@@ -30,6 +31,7 @@ query GetCustomer($id: UUID!) {
 ```
 
 Variables:
+
 ```json
 {
   "id": "customer-uuid-here"
@@ -39,6 +41,7 @@ Variables:
 ---
 
 #### Get All Customers (Paginated)
+
 ```graphql
 query GetCustomers($first: Int, $after: String, $filter: CustomerFilterInput) {
   customers(first: $first, after: $after, filter: $filter) {
@@ -65,6 +68,7 @@ query GetCustomers($first: Int, $after: String, $filter: CustomerFilterInput) {
 ```
 
 Variables:
+
 ```json
 {
   "first": 10,
@@ -81,6 +85,7 @@ Variables:
 ```
 
 Filter example (search by email):
+
 ```json
 {
   "first": 10,
@@ -92,6 +97,7 @@ Filter example (search by email):
 ```
 
 Filter example (search by name):
+
 ```json
 {
   "first": 10,
@@ -104,6 +110,7 @@ Filter example (search by name):
 ```
 
 Filter example (search by date range):
+
 ```json
 {
   "first": 10,
@@ -118,6 +125,7 @@ Filter example (search by date range):
 ---
 
 #### Search Customers
+
 ```graphql
 query SearchCustomers($query: String!, $first: Int, $after: String) {
   searchCustomers(query: $query, first: $first, after: $after) {
@@ -144,6 +152,7 @@ query SearchCustomers($query: String!, $first: Int, $after: String) {
 ```
 
 Variables:
+
 ```json
 {
   "query": "john",
@@ -155,6 +164,7 @@ Variables:
 ---
 
 #### Get Single Address
+
 ```graphql
 query GetAddress($id: UUID!) {
   address(id: $id) {
@@ -174,6 +184,7 @@ query GetAddress($id: UUID!) {
 ```
 
 Variables:
+
 ```json
 {
   "id": "address-uuid-here"
@@ -183,9 +194,20 @@ Variables:
 ---
 
 #### Get Customer Addresses
+
 ```graphql
-query GetAddresses($customerId: UUID, $type: AddressType, $first: Int, $after: String) {
-  addresses(customerId: $customerId, type: $type, first: $first, after: $after) {
+query GetAddresses(
+  $customerId: UUID
+  $type: AddressType
+  $first: Int
+  $after: String
+) {
+  addresses(
+    customerId: $customerId
+    type: $type
+    first: $first
+    after: $after
+  ) {
     edges {
       cursor
       node {
@@ -213,6 +235,7 @@ query GetAddresses($customerId: UUID, $type: AddressType, $first: Int, $after: S
 ```
 
 Variables (all addresses for customer):
+
 ```json
 {
   "customerId": "customer-uuid-here",
@@ -223,6 +246,7 @@ Variables (all addresses for customer):
 ```
 
 Variables (only shipping addresses):
+
 ```json
 {
   "customerId": "customer-uuid-here",
@@ -237,6 +261,7 @@ Variables (only shipping addresses):
 ### Mutations
 
 #### Create Customer
+
 ```graphql
 mutation CreateCustomer($input: CreateCustomerInput!) {
   createCustomer(input: $input) {
@@ -259,6 +284,7 @@ mutation CreateCustomer($input: CreateCustomerInput!) {
 ```
 
 Variables:
+
 ```json
 {
   "input": {
@@ -273,6 +299,7 @@ Variables:
 ---
 
 #### Update Customer
+
 ```graphql
 mutation UpdateCustomer($id: UUID!, $input: UpdateCustomerInput!) {
   updateCustomer(id: $id, input: $input) {
@@ -295,6 +322,7 @@ mutation UpdateCustomer($id: UUID!, $input: UpdateCustomerInput!) {
 ```
 
 Variables:
+
 ```json
 {
   "id": "customer-uuid-here",
@@ -309,6 +337,7 @@ Variables:
 ---
 
 #### Delete Customer
+
 ```graphql
 mutation DeleteCustomer($id: UUID!) {
   deleteCustomer(id: $id) {
@@ -323,6 +352,7 @@ mutation DeleteCustomer($id: UUID!) {
 ```
 
 Variables:
+
 ```json
 {
   "id": "customer-uuid-here"
@@ -332,6 +362,7 @@ Variables:
 ---
 
 #### Create Address
+
 ```graphql
 mutation CreateAddress($input: CreateAddressInput!) {
   createAddress(input: $input) {
@@ -358,6 +389,7 @@ mutation CreateAddress($input: CreateAddressInput!) {
 ```
 
 Variables (Shipping Address):
+
 ```json
 {
   "input": {
@@ -374,6 +406,7 @@ Variables (Shipping Address):
 ```
 
 Variables (Billing Address):
+
 ```json
 {
   "input": {
@@ -392,6 +425,7 @@ Variables (Billing Address):
 ---
 
 #### Update Address
+
 ```graphql
 mutation UpdateAddress($id: UUID!, $input: UpdateAddressInput!) {
   updateAddress(id: $id, input: $input) {
@@ -418,6 +452,7 @@ mutation UpdateAddress($id: UUID!, $input: UpdateAddressInput!) {
 ```
 
 Variables:
+
 ```json
 {
   "id": "address-uuid-here",
@@ -433,6 +468,7 @@ Variables:
 ---
 
 #### Delete Address
+
 ```graphql
 mutation DeleteAddress($id: UUID!) {
   deleteAddress(id: $id) {
@@ -447,6 +483,7 @@ mutation DeleteAddress($id: UUID!) {
 ```
 
 Variables:
+
 ```json
 {
   "id": "address-uuid-here"
@@ -460,6 +497,7 @@ Variables:
 ### Queries
 
 #### Get Single Order
+
 ```graphql
 query GetOrder($id: UUID!) {
   order(id: $id) {
@@ -503,7 +541,6 @@ query GetOrder($id: UUID!) {
     region {
       id
       name
-      code
     }
     items {
       id
@@ -527,6 +564,7 @@ query GetOrder($id: UUID!) {
 ```
 
 Variables:
+
 ```json
 {
   "id": "order-uuid-here"
@@ -536,6 +574,7 @@ Variables:
 ---
 
 #### Get All Orders (Paginated)
+
 ```graphql
 query GetOrders($first: Int, $after: String, $filter: OrderFilterInput) {
   orders(first: $first, after: $after, filter: $filter) {
@@ -573,6 +612,7 @@ query GetOrders($first: Int, $after: String, $filter: OrderFilterInput) {
 ```
 
 Variables (all orders):
+
 ```json
 {
   "first": 10,
@@ -582,6 +622,7 @@ Variables (all orders):
 ```
 
 Variables (filter by customer):
+
 ```json
 {
   "first": 10,
@@ -593,6 +634,7 @@ Variables (filter by customer):
 ```
 
 Variables (filter by status):
+
 ```json
 {
   "first": 10,
@@ -604,6 +646,7 @@ Variables (filter by status):
 ```
 
 Variables (filter by date range):
+
 ```json
 {
   "first": 10,
@@ -616,6 +659,7 @@ Variables (filter by date range):
 ```
 
 Variables (filter by amount range):
+
 ```json
 {
   "first": 10,
@@ -632,6 +676,7 @@ Variables (filter by amount range):
 ### Mutations
 
 #### Create Order
+
 ```graphql
 mutation CreateOrder($input: CreateOrderInput!) {
   createOrder(input: $input) {
@@ -668,6 +713,7 @@ mutation CreateOrder($input: CreateOrderInput!) {
 ```
 
 Variables (basic order):
+
 ```json
 {
   "input": {
@@ -693,6 +739,7 @@ Variables (basic order):
 ```
 
 Variables (order with discount):
+
 ```json
 {
   "input": {
@@ -715,6 +762,7 @@ Variables (order with discount):
 ---
 
 #### Update Order Status
+
 ```graphql
 mutation UpdateOrderStatus($id: UUID!, $input: UpdateOrderStatusInput!) {
   updateOrderStatus(id: $id, input: $input) {
@@ -734,6 +782,7 @@ mutation UpdateOrderStatus($id: UUID!, $input: UpdateOrderStatusInput!) {
 ```
 
 Variables (mark as paid):
+
 ```json
 {
   "id": "order-uuid-here",
@@ -744,6 +793,7 @@ Variables (mark as paid):
 ```
 
 Variables (mark as shipped):
+
 ```json
 {
   "id": "order-uuid-here",
@@ -754,6 +804,7 @@ Variables (mark as shipped):
 ```
 
 Variables (cancel order):
+
 ```json
 {
   "id": "order-uuid-here",
@@ -766,6 +817,7 @@ Variables (cancel order):
 ---
 
 #### Delete Order
+
 ```graphql
 mutation DeleteOrder($id: UUID!) {
   deleteOrder(id: $id) {
@@ -780,6 +832,7 @@ mutation DeleteOrder($id: UUID!) {
 ```
 
 Variables:
+
 ```json
 {
   "id": "order-uuid-here"
@@ -792,7 +845,65 @@ Variables:
 
 ### Mutations
 
+#### Create Category
+
+```graphql
+mutation CreateCategory($input: CreateCategoryInput!) {
+  createCategory(input: $input) {
+    success
+    data {
+      id
+      name
+      slug
+      parentId
+      createdAt
+    }
+    error {
+      code
+      message
+    }
+  }
+}
+```
+
+Variables (top-level category - slug auto-generated):
+
+```json
+{
+  "input": {
+    "name": "Electronics",
+    "parentId": null
+  }
+}
+```
+
+Variables (with custom slug):
+
+```json
+{
+  "input": {
+    "name": "Electronics",
+    "slug": "electronics-custom",
+    "parentId": null
+  }
+}
+```
+
+Variables (subcategory):
+
+```json
+{
+  "input": {
+    "name": "Headphones",
+    "parentId": "parent-category-uuid-here"
+  }
+}
+```
+
+---
+
 #### Create Product
+
 ```graphql
 mutation CreateProduct($input: CreateProductInput!) {
   createProduct(input: $input) {
@@ -819,6 +930,7 @@ mutation CreateProduct($input: CreateProductInput!) {
 ```
 
 Variables:
+
 ```json
 {
   "input": {
@@ -832,6 +944,7 @@ Variables:
 ---
 
 #### Update Product
+
 ```graphql
 mutation UpdateProduct($id: UUID!, $input: UpdateProductInput!) {
   updateProduct(id: $id, input: $input) {
@@ -858,6 +971,7 @@ mutation UpdateProduct($id: UUID!, $input: UpdateProductInput!) {
 ```
 
 Variables:
+
 ```json
 {
   "id": "product-uuid-here",
@@ -872,6 +986,7 @@ Variables:
 ---
 
 #### Add Product to Collection
+
 ```graphql
 mutation AddProductToCollection($collectionId: UUID!, $productId: UUID!) {
   addProductToCollection(collectionId: $collectionId, productId: $productId) {
@@ -901,6 +1016,7 @@ mutation AddProductToCollection($collectionId: UUID!, $productId: UUID!) {
 ```
 
 Variables:
+
 ```json
 {
   "collectionId": "collection-uuid-here",
@@ -909,6 +1025,7 @@ Variables:
 ```
 
 Error codes:
+
 - `COLLECTION_NOT_FOUND` - Collection does not exist
 - `PRODUCT_NOT_FOUND` - Product does not exist
 - `PRODUCT_ALREADY_IN_COLLECTION` - Product is already in this collection
@@ -917,9 +1034,13 @@ Error codes:
 ---
 
 #### Remove Product from Collection
+
 ```graphql
 mutation RemoveProductFromCollection($collectionId: UUID!, $productId: UUID!) {
-  removeProductFromCollection(collectionId: $collectionId, productId: $productId) {
+  removeProductFromCollection(
+    collectionId: $collectionId
+    productId: $productId
+  ) {
     success
     data {
       id
@@ -946,6 +1067,7 @@ mutation RemoveProductFromCollection($collectionId: UUID!, $productId: UUID!) {
 ```
 
 Variables:
+
 ```json
 {
   "collectionId": "collection-uuid-here",
@@ -954,6 +1076,7 @@ Variables:
 ```
 
 Error codes:
+
 - `COLLECTION_NOT_FOUND` - Collection does not exist
 - `PRODUCT_NOT_IN_COLLECTION` - Product is not in this collection
 - `PRODUCT_REMOVE_FAILED` - Failed to remove product from collection
@@ -961,8 +1084,12 @@ Error codes:
 ---
 
 #### Set Channel Product Price
+
 ```graphql
-mutation SetChannelProductPrice($channelId: UUID!, $input: SetChannelProductPriceInput!) {
+mutation SetChannelProductPrice(
+  $channelId: UUID!
+  $input: SetChannelProductPriceInput!
+) {
   setChannelProductPrice(channelId: $channelId, input: $input) {
     success
     data {
@@ -986,6 +1113,7 @@ mutation SetChannelProductPrice($channelId: UUID!, $input: SetChannelProductPric
 ```
 
 Variables (set new price):
+
 ```json
 {
   "channelId": "channel-uuid-here",
@@ -998,6 +1126,7 @@ Variables (set new price):
 ```
 
 Variables (update existing price):
+
 ```json
 {
   "channelId": "channel-uuid-here",
@@ -1010,6 +1139,7 @@ Variables (update existing price):
 ```
 
 Variables (hide product in channel):
+
 ```json
 {
   "channelId": "channel-uuid-here",
@@ -1022,6 +1152,7 @@ Variables (hide product in channel):
 ```
 
 Error codes:
+
 - `CHANNEL_NOT_FOUND` - Channel does not exist
 - `PRODUCT_VARIANT_NOT_FOUND` - Product variant does not exist
 - `INVALID_PRICE` - Price must be a positive number
@@ -1055,6 +1186,7 @@ query GetNextPage($first: Int, $after: String) {
 ```
 
 To get the next page, use the `endCursor` from the previous response:
+
 ```json
 {
   "first": 10,
@@ -1065,12 +1197,14 @@ To get the next page, use the `endCursor` from the previous response:
 ### Address Types
 
 Two types of addresses are supported:
+
 - `SHIPPING` - For delivery addresses
 - `BILLING` - For billing/payment addresses
 
 ### Order Status
 
 Possible order statuses:
+
 - `PENDING` - Order created but not yet paid
 - `PAID` - Payment received
 - `SHIPPED` - Order shipped
@@ -1079,6 +1213,7 @@ Possible order statuses:
 ### Decimal Values
 
 For monetary amounts (prices, totals), use strings to preserve precision:
+
 ```json
 {
   "priceAtOrderTime": "49.99",
@@ -1089,6 +1224,7 @@ For monetary amounts (prices, totals), use strings to preserve precision:
 ### DateTime Values
 
 Use ISO 8601 format for date/time values:
+
 ```json
 {
   "createdAfter": "2024-01-01T00:00:00Z",
