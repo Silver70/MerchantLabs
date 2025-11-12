@@ -1,9 +1,88 @@
 import type { MutationResolvers } from "../../../../types.generated";
 import { db } from "../../../../../db/index";
 import { ordersTable, orderItemsTable } from "../../../../../db/schema/orders";
+import { eq } from "drizzle-orm";
+import { customersTable, addressesTable } from "../../../../../db/schema/customers";
+import { channelsTable, regionsTable } from "../../../../../db/schema/regions-channels";
 
 export const createOrder: NonNullable<MutationResolvers['createOrder']> = async (_parent, args, _ctx): Promise<any> => {
   try {
+    // Validate all required entities exist
+    const [customer, shippingAddress, billingAddress, channel] = await Promise.all([
+      db.query.customersTable.findFirst({
+        where: eq(customersTable.id, args.input.customerId),
+      }),
+      db.query.addressesTable.findFirst({
+        where: eq(addressesTable.id, args.input.shippingAddressId),
+      }),
+      db.query.addressesTable.findFirst({
+        where: eq(addressesTable.id, args.input.billingAddressId),
+      }),
+      db.query.channelsTable.findFirst({
+        where: eq(channelsTable.id, args.input.channelId),
+      }),
+    ]);
+
+    if (!customer) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "CUSTOMER_NOT_FOUND",
+          message: "Customer not found",
+        },
+      };
+    }
+
+    if (!shippingAddress) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "SHIPPING_ADDRESS_NOT_FOUND",
+          message: "Shipping address not found",
+        },
+      };
+    }
+
+    if (!billingAddress) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "BILLING_ADDRESS_NOT_FOUND",
+          message: "Billing address not found",
+        },
+      };
+    }
+
+    if (!channel) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "CHANNEL_NOT_FOUND",
+          message: "Channel not found",
+        },
+      };
+    }
+
+    // Get region from channel (or use a default/provided region)
+    const region = await db.query.regionsTable.findFirst({
+      where: eq(regionsTable.id, channel.regionId as any),
+    });
+
+    if (!region) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "REGION_NOT_FOUND",
+          message: "Region not found",
+        },
+      };
+    }
+
     // Calculate totals from items
     const subtotalAmount = args.input.items.reduce((sum, item) => {
       return sum + (Number(item.priceAtOrderTime) * item.quantity);
@@ -18,8 +97,8 @@ export const createOrder: NonNullable<MutationResolvers['createOrder']> = async 
         shippingAddressId: args.input.shippingAddressId,
         billingAddressId: args.input.billingAddressId,
         discountId: args.input.discountId || null,
-        regionId: args.input.channelId, // TODO: Get actual region from channel
-        currencyCode: "USD", // TODO: Get from channel/region config
+        regionId: region.id,
+        currencyCode: (region as any).currencyCode || "USD",
         subtotalAmount: subtotalAmount.toString(),
         taxAmount: "0", // TODO: Calculate tax
         totalAmount: subtotalAmount.toString(), // TODO: Apply discount

@@ -1,34 +1,83 @@
-import type { MutationResolvers } from './../../../../types.generated';
+import type { MutationResolvers } from "../../../../types.generated";
 import { db } from "../../../../../db/index";
 import { collectionProductsTable, collectionsTable } from "../../../../../db/schema/catalog";
 import { and, eq } from "drizzle-orm";
 
-export const removeProductFromCollection: NonNullable<MutationResolvers['removeProductFromCollection']> = async (
-  _parent,
-  args,
-  _ctx
-) => {
+export const removeProductFromCollection: NonNullable<
+  MutationResolvers["removeProductFromCollection"]
+> = async (_parent, args, _ctx): Promise<any> => {
   try {
-    // Delete the product from collection
-    void db
+    // Validate collection exists
+    const collection = await db.query.collectionsTable.findFirst({
+      where: eq(collectionsTable.id, args.collectionId),
+    });
+
+    if (!collection) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "COLLECTION_NOT_FOUND",
+          message: "Collection not found",
+        },
+      };
+    }
+
+    // Check if product is in collection
+    const existing = await db.query.collectionProductsTable.findFirst({
+      where: and(
+        eq(collectionProductsTable.collectionId, args.collectionId),
+        eq(collectionProductsTable.productId, args.productId)
+      ),
+    });
+
+    if (!existing) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "PRODUCT_NOT_IN_COLLECTION",
+          message: "Product is not in this collection",
+        },
+      };
+    }
+
+    // CRITICAL FIX: Await the delete operation!
+    const deleteResult = await db
       .delete(collectionProductsTable)
       .where(
         and(
           eq(collectionProductsTable.collectionId, args.collectionId),
           eq(collectionProductsTable.productId, args.productId)
         )
-      );
+      )
+      .returning();
+
+    if (!deleteResult || deleteResult.length === 0) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "PRODUCT_REMOVE_FAILED",
+          message: "Failed to remove product from collection",
+        },
+      };
+    }
 
     // Fetch the updated collection
-    const collection = await db.query.collectionsTable.findFirst({
+    const updatedCollection = await db.query.collectionsTable.findFirst({
       where: eq(collectionsTable.id, args.collectionId),
       with: {
-        products: {
+        collectionProducts: {
           with: {
-            category: true,
-            variants: {
+            product: {
               with: {
-                attributes: true,
+                category: true,
+                variants: {
+                  with: {
+                    attributes: true,
+                  },
+                },
               },
             },
           },
@@ -36,19 +85,32 @@ export const removeProductFromCollection: NonNullable<MutationResolvers['removeP
       },
     });
 
+    // Transform to match GraphQL schema - remove collectionProducts from response
+    let result = null;
+    if (updatedCollection) {
+      const { collectionProducts, ...rest } = updatedCollection;
+      result = {
+        ...rest,
+        products: collectionProducts?.map((cp: any) => cp.product) ?? [],
+      };
+    }
+
     return {
-      success: !!collection,
-      data: (collection || null) as any,
+      success: true,
+      data: result as any,
       error: null,
     };
   } catch (error) {
-    console.error('Error removing product from collection:', error);
+    console.error("Error removing product from collection:", error);
     return {
       success: false,
       data: null,
       error: {
-        code: 'PRODUCT_REMOVE_ERROR',
-        message: error instanceof Error ? error.message : 'Failed to remove product from collection',
+        code: "PRODUCT_REMOVE_ERROR",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to remove product from collection",
       } as any,
     };
   }

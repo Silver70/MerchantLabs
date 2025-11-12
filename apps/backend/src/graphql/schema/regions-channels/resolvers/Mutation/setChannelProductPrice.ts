@@ -5,8 +5,11 @@ import {
   channelsTable,
 } from "../../../../../db/schema/regions-channels";
 import { eq, and } from "drizzle-orm";
+import { productVariantsTable } from "../../../../../db/schema/catalog";
 
-export const setChannelProductPrice: NonNullable<MutationResolvers['setChannelProductPrice']> = async (_parent, args, _ctx): Promise<any> => {
+export const setChannelProductPrice: NonNullable<
+  MutationResolvers["setChannelProductPrice"]
+> = async (_parent, args, _ctx): Promise<any> => {
   try {
     // Validate channel exists
     const channel = await db.query.channelsTable.findFirst({
@@ -20,6 +23,34 @@ export const setChannelProductPrice: NonNullable<MutationResolvers['setChannelPr
         error: {
           code: "CHANNEL_NOT_FOUND",
           message: "Channel not found",
+        } as any,
+      };
+    }
+
+    // Validate product variant exists
+    const productVariant = await db.query.productVariantsTable.findFirst({
+      where: eq(productVariantsTable.id, args.input.productVariantId),
+    });
+
+    if (!productVariant) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "PRODUCT_VARIANT_NOT_FOUND",
+          message: "Product variant not found",
+        } as any,
+      };
+    }
+
+    // Validate price is positive
+    if (args.input.price < 0) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "INVALID_PRICE",
+          message: "Price must be a positive number",
         } as any,
       };
     }
@@ -38,8 +69,8 @@ export const setChannelProductPrice: NonNullable<MutationResolvers['setChannelPr
     );
 
     if (existingChannelProduct) {
-      // Update existing
-      await db
+      // CRITICAL FIX: Await the update and check result with .returning()
+      const updateResult = await db
         .update(channelProductsTable)
         .set({
           price: args.input.price,
@@ -53,15 +84,41 @@ export const setChannelProductPrice: NonNullable<MutationResolvers['setChannelPr
               args.input.productVariantId
             )
           )
-        );
+        )
+        .returning();
+
+      if (!updateResult || updateResult.length === 0) {
+        return {
+          success: false,
+          data: null,
+          error: {
+            code: "PRICE_UPDATE_FAILED",
+            message: "Failed to update channel product price",
+          } as any,
+        };
+      }
     } else {
-      // Insert new
-      await db.insert(channelProductsTable).values({
-        channelId: args.channelId,
-        productVariantId: args.input.productVariantId,
-        price: args.input.price,
-        isVisible: args.input.isVisible ?? true,
-      });
+      // CRITICAL FIX: Await the insert and check result with .returning()
+      const insertResult = await db
+        .insert(channelProductsTable)
+        .values({
+          channelId: args.channelId,
+          productVariantId: args.input.productVariantId,
+          price: args.input.price,
+          isVisible: args.input.isVisible ?? true,
+        })
+        .returning();
+
+      if (!insertResult || insertResult.length === 0) {
+        return {
+          success: false,
+          data: null,
+          error: {
+            code: "PRICE_SET_FAILED",
+            message: "Failed to set channel product price",
+          } as any,
+        };
+      }
     }
 
     return {

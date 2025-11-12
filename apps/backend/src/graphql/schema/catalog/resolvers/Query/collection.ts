@@ -11,7 +11,32 @@ export const collection: NonNullable<QueryResolvers['collection']> = async (
   try {
     const collectionData = await db.query.collectionsTable.findFirst({
       where: eq(collectionsTable.id, args.id),
+      with: {
+        collectionProducts: {
+          with: {
+            product: {
+              with: {
+                category: true,
+                variants: {
+                  with: {
+                    attributes: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
+
+    // Transform collectionProducts into a products array for GraphQL
+    if (collectionData) {
+      const { collectionProducts, ...rest } = collectionData;
+      return {
+        ...rest,
+        products: collectionProducts?.map((cp: any) => cp.product) ?? [],
+      } as any;
+    }
 
     return collectionData as any;
   } catch (error) {

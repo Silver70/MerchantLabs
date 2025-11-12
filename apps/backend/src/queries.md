@@ -788,6 +788,248 @@ Variables:
 
 ---
 
+## CATALOG
+
+### Mutations
+
+#### Create Product
+```graphql
+mutation CreateProduct($input: CreateProductInput!) {
+  createProduct(input: $input) {
+    success
+    data {
+      id
+      name
+      slug
+      description
+      category {
+        id
+        name
+      }
+      isActive
+      createdAt
+    }
+    error {
+      code
+      message
+      details
+    }
+  }
+}
+```
+
+Variables:
+```json
+{
+  "input": {
+    "name": "Wireless Headphones",
+    "description": "High-quality wireless headphones with noise cancellation",
+    "categoryId": "category-uuid-here"
+  }
+}
+```
+
+---
+
+#### Update Product
+```graphql
+mutation UpdateProduct($id: UUID!, $input: UpdateProductInput!) {
+  updateProduct(id: $id, input: $input) {
+    success
+    data {
+      id
+      name
+      slug
+      description
+      category {
+        id
+        name
+      }
+      isActive
+      updatedAt
+    }
+    error {
+      code
+      message
+      details
+    }
+  }
+}
+```
+
+Variables:
+```json
+{
+  "id": "product-uuid-here",
+  "input": {
+    "name": "Wireless Headphones Pro",
+    "description": "Premium wireless headphones with advanced noise cancellation",
+    "isActive": true
+  }
+}
+```
+
+---
+
+#### Add Product to Collection
+```graphql
+mutation AddProductToCollection($collectionId: UUID!, $productId: UUID!) {
+  addProductToCollection(collectionId: $collectionId, productId: $productId) {
+    success
+    data {
+      id
+      name
+      description
+      products {
+        id
+        name
+        slug
+        category {
+          id
+          name
+        }
+      }
+      createdAt
+    }
+    error {
+      code
+      message
+      details
+    }
+  }
+}
+```
+
+Variables:
+```json
+{
+  "collectionId": "collection-uuid-here",
+  "productId": "product-uuid-here"
+}
+```
+
+Error codes:
+- `COLLECTION_NOT_FOUND` - Collection does not exist
+- `PRODUCT_NOT_FOUND` - Product does not exist
+- `PRODUCT_ALREADY_IN_COLLECTION` - Product is already in this collection
+- `PRODUCT_ADD_FAILED` - Failed to add product to collection
+
+---
+
+#### Remove Product from Collection
+```graphql
+mutation RemoveProductFromCollection($collectionId: UUID!, $productId: UUID!) {
+  removeProductFromCollection(collectionId: $collectionId, productId: $productId) {
+    success
+    data {
+      id
+      name
+      description
+      products {
+        id
+        name
+        slug
+        category {
+          id
+          name
+        }
+      }
+      updatedAt
+    }
+    error {
+      code
+      message
+      details
+    }
+  }
+}
+```
+
+Variables:
+```json
+{
+  "collectionId": "collection-uuid-here",
+  "productId": "product-uuid-here"
+}
+```
+
+Error codes:
+- `COLLECTION_NOT_FOUND` - Collection does not exist
+- `PRODUCT_NOT_IN_COLLECTION` - Product is not in this collection
+- `PRODUCT_REMOVE_FAILED` - Failed to remove product from collection
+
+---
+
+#### Set Channel Product Price
+```graphql
+mutation SetChannelProductPrice($channelId: UUID!, $input: SetChannelProductPriceInput!) {
+  setChannelProductPrice(channelId: $channelId, input: $input) {
+    success
+    data {
+      id
+      name
+      slug
+      regionId
+      currencyCode
+      taxInclusive
+      defaultLanguage
+      isActive
+      createdAt
+    }
+    error {
+      code
+      message
+      details
+    }
+  }
+}
+```
+
+Variables (set new price):
+```json
+{
+  "channelId": "channel-uuid-here",
+  "input": {
+    "productVariantId": "product-variant-uuid-here",
+    "price": "99.99",
+    "isVisible": true
+  }
+}
+```
+
+Variables (update existing price):
+```json
+{
+  "channelId": "channel-uuid-here",
+  "input": {
+    "productVariantId": "product-variant-uuid-here",
+    "price": "79.99",
+    "isVisible": true
+  }
+}
+```
+
+Variables (hide product in channel):
+```json
+{
+  "channelId": "channel-uuid-here",
+  "input": {
+    "productVariantId": "product-variant-uuid-here",
+    "price": "99.99",
+    "isVisible": false
+  }
+}
+```
+
+Error codes:
+- `CHANNEL_NOT_FOUND` - Channel does not exist
+- `PRODUCT_VARIANT_NOT_FOUND` - Product variant does not exist
+- `INVALID_PRICE` - Price must be a positive number
+- `PRICE_SET_FAILED` - Failed to set channel product price
+- `PRICE_UPDATE_FAILED` - Failed to update channel product price
+
+---
+
 ## Common Patterns
 
 ### Pagination
