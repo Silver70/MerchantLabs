@@ -90,9 +90,9 @@
 	<!-- Footer Section (Optional) -->
 	<div class="border-t border-gray-200 px-3 py-4">
 		<button
-			class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+			class="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-orange-50 hover:text-orange-600"
 		>
-			<div class="flex h-5 w-5 shrink-0 items-center justify-center text-gray-400">
+			<div class="flex h-5 w-5 shrink-0 items-center justify-center text-gray-400 transition-colors duration-200 group-hover:text-orange-600">
 				<svg
 					class="h-5 w-5"
 					fill="none"
