@@ -1,15 +1,21 @@
 import type { MutationResolvers } from "../../../../types.generated";
 import { db } from "../../../../../db/index";
 import { regionsTable } from "../../../../../db/schema/regions-channels";
+import { Decimal as DecimalJS } from "decimal.js";
 
 export const createRegion: NonNullable<MutationResolvers['createRegion']> = async (_parent, args, _ctx) => {
   try {
+    // Convert taxRate to string for database storage
+    const taxRateValue = args.input.taxRate instanceof DecimalJS
+      ? args.input.taxRate.toString()
+      : String(args.input.taxRate);
+
     const newRegionArray = await db
       .insert(regionsTable)
       .values({
         name: args.input.name,
         countryCodes: args.input.countryCodes,
-        taxRate: args.input.taxRate,
+        taxRate: taxRateValue,
         taxCode: args.input.taxCode || null,
       })
       .returning();

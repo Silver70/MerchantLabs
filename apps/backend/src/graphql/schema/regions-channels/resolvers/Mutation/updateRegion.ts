@@ -2,6 +2,7 @@ import type { MutationResolvers } from "../../../../types.generated";
 import { db } from "../../../../../db/index";
 import { regionsTable } from "../../../../../db/schema/regions-channels";
 import { eq } from "drizzle-orm";
+import { Decimal as DecimalJS } from "decimal.js";
 
 export const updateRegion: NonNullable<MutationResolvers['updateRegion']> = async (_parent, args, _ctx) => {
   try {
@@ -10,7 +11,12 @@ export const updateRegion: NonNullable<MutationResolvers['updateRegion']> = asyn
     if (args.input.name !== undefined) updateData.name = args.input.name;
     if (args.input.countryCodes !== undefined)
       updateData.countryCodes = args.input.countryCodes;
-    if (args.input.taxRate !== undefined) updateData.taxRate = args.input.taxRate;
+    if (args.input.taxRate !== undefined) {
+      // Convert taxRate to string for database storage
+      updateData.taxRate = args.input.taxRate instanceof DecimalJS
+        ? args.input.taxRate.toString()
+        : String(args.input.taxRate);
+    }
     if (args.input.taxCode !== undefined) updateData.taxCode = args.input.taxCode;
 
     const updatedRegionArray = await db
