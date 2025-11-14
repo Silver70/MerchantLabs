@@ -26,6 +26,7 @@
 	]);
 
 	let isCollapsed = $state(false);
+	let hoveredItem = $state<string | null>(null);
 
 	const toggleCollapse = () => {
 		isCollapsed = !isCollapsed;
@@ -64,6 +65,8 @@
 	<nav class="flex-1 space-y-2 overflow-y-auto px-3 py-6">
 		{#each menuItems as item (item.href)}
 			{@const IconComponent = item.icon}
+			{@const isItemHovered = hoveredItem === item.href}
+			{@const iconColor = item.isActive || isItemHovered ? 'orange' : item.color}
 			<a
 				href={item.href}
 				class={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
@@ -72,13 +75,15 @@
 						: 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
 				}`}
 				aria-current={item.isActive ? 'page' : undefined}
+				onmouseenter={() => (hoveredItem = item.href)}
+				onmouseleave={() => (hoveredItem = null)}
 			>
 				<div
 					class={`flex h-5 w-5 shrink-0 items-center justify-center transition-colors duration-200 ${
 						item.isActive ? 'text-orange-600' : 'text-gray-400 group-hover:text-orange-600'
 					}`}
 				>
-					<IconComponent color={item.isActive ? 'orange' : item.color} />
+					<IconComponent color={iconColor} />
 				</div>
 				{#if !isCollapsed}
 					<span class="truncate">{item.label}</span>
