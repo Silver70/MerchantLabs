@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Logo from '$lib/assets/Logo.svg';
+	import LogoIcon from '$lib/assets/LogoIcon.svg';
 	import DashboardIcon from '$lib/assets/icons/dashboard_Icon.svelte';
 	import DiscountIcon from '$lib/assets/icons/discount_icon.svelte';
 	import SettingIcon from '$lib/assets/icons/setting_icon.svelte';
@@ -15,7 +16,14 @@
 		color?: string;
 	}
 
-	// Props
+	interface SidebarProps {
+		isCollapsed?: boolean;
+		onToggleCollapse?: () => void;
+	}
+
+	let { isCollapsed = $bindable(false), onToggleCollapse }: SidebarProps = $props();
+
+	// Internal state
 	let menuItems = $state<MenuItem[]>([
 		{ label: 'Dashboard', href: '/', icon: DashboardIcon, isActive: true, color: 'gray' },
 		{ label: 'Products', href: '/products', icon: ProductIcon, isActive: false, color: 'gray' },
@@ -25,12 +33,7 @@
 		{ label: 'Settings', href: '/settings', icon: SettingIcon, isActive: false, color: 'gray' }
 	]);
 
-	let isCollapsed = $state(false);
 	let hoveredItem = $state<string | null>(null);
-
-	const toggleCollapse = () => {
-		isCollapsed = !isCollapsed;
-	};
 </script>
 
 <!-- Sidebar Container -->
@@ -40,25 +43,12 @@
 	}`}
 >
 	<!-- Logo Section -->
-	<div class="flex items-center justify-between border-b border-gray-200 px-6 py-6">
+	<div class="flex items-center justify-center px-4 py-6">
 		{#if !isCollapsed}
-			<img src={Logo} alt="MerchantLabs Logo" class="h-8 w-auto" />
+			<img src={Logo} alt="MerchantLabs Logo" class="h-12" />
+		{:else}
+			<img src={LogoIcon} alt="MerchantLabs Logo" class="h-10" />
 		{/if}
-		<button
-			onclick={toggleCollapse}
-			class="ml-auto inline-flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:outline-none"
-			aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-		>
-			<svg
-				class={`h-5 w-5 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}
-				fill="none"
-				stroke="currentColor"
-				viewBox="0 0 24 24"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-			</svg>
-		</button>
 	</div>
 
 	<!-- Navigation Menu -->
@@ -97,7 +87,9 @@
 		<button
 			class="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-orange-50 hover:text-orange-600"
 		>
-			<div class="flex h-5 w-5 shrink-0 items-center justify-center text-gray-400 transition-colors duration-200 group-hover:text-orange-600">
+			<div
+				class="flex h-5 w-5 shrink-0 items-center justify-center text-gray-400 transition-colors duration-200 group-hover:text-orange-600"
+			>
 				<svg
 					class="h-5 w-5"
 					fill="none"
