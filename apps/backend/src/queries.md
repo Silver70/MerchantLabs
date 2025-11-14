@@ -1161,6 +1161,22 @@ Error codes:
 
 ---
 
+#### Query Channel Products
+
+**Note:** Currently there is no dedicated query to retrieve channel products. Channel products are stored in the database but not exposed through GraphQL queries. To fetch products for a specific channel, you would need to:
+
+1. Query the products separately
+2. Filter them on the client side based on channel availability
+3. Or implement a new query resolver if needed
+
+The channel-product relationship includes pricing information stored in the `channel_products` table with the following fields:
+- `channelId` (UUID)
+- `productVariantId` (UUID)
+- `price` (Decimal)
+- `isVisible` (Boolean)
+
+---
+
 ## Common Patterns
 
 ### Pagination

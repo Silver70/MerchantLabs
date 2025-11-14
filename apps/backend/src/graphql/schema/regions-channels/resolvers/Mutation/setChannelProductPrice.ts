@@ -6,6 +6,7 @@ import {
 } from "../../../../../db/schema/regions-channels";
 import { eq, and } from "drizzle-orm";
 import { productVariantsTable } from "../../../../../db/schema/catalog";
+import { Decimal as DecimalJS } from "decimal.js";
 
 export const setChannelProductPrice: NonNullable<
   MutationResolvers["setChannelProductPrice"]
@@ -43,8 +44,14 @@ export const setChannelProductPrice: NonNullable<
       };
     }
 
+    // Convert price to string for database storage
+    const priceValue = args.input.price instanceof DecimalJS
+      ? args.input.price.toString()
+      : String(args.input.price);
+
     // Validate price is positive
-    if (args.input.price < 0) {
+    const priceDecimal = new DecimalJS(priceValue);
+    if (priceDecimal.lessThan(0)) {
       return {
         success: false,
         data: null,
@@ -73,7 +80,7 @@ export const setChannelProductPrice: NonNullable<
       const updateResult = await db
         .update(channelProductsTable)
         .set({
-          price: args.input.price,
+          price: priceValue,
           isVisible: args.input.isVisible ?? existingChannelProduct.isVisible,
         })
         .where(
@@ -104,7 +111,7 @@ export const setChannelProductPrice: NonNullable<
         .values({
           channelId: args.channelId,
           productVariantId: args.input.productVariantId,
-          price: args.input.price,
+          price: priceValue,
           isVisible: args.input.isVisible ?? true,
         })
         .returning();
