@@ -1,0 +1,116 @@
+<script lang="ts">
+	import Logo from '$lib/assets/Logo.svg';
+	import DashboardIcon from '$lib/assets/icons/dashboard_Icon.svelte';
+	import DiscountIcon from '$lib/assets/icons/discount_icon.svelte';
+	import SettingIcon from '$lib/assets/icons/setting_icon.svelte';
+	import CustomerIcon from '$lib/assets/icons/customer_icon.svelte';
+	import ProductIcon from '$lib/assets/icons/product_icon.svelte';
+	import AnalyticIcon from '$lib/assets/icons/analytic_icon.svelte';
+
+	interface MenuItem {
+		label: string;
+		href: string;
+		icon: any;
+		isActive?: boolean;
+		color?: string;
+	}
+
+	// Props
+	let menuItems = $state<MenuItem[]>([
+		{ label: 'Dashboard', href: '/', icon: DashboardIcon, isActive: true, color: 'gray' },
+		{ label: 'Products', href: '/products', icon: ProductIcon, isActive: false, color: 'gray' },
+		{ label: 'Customers', href: '/customers', icon: CustomerIcon, isActive: false, color: 'gray' },
+		{ label: 'Discounts', href: '/discounts', icon: DiscountIcon, isActive: false, color: 'gray' },
+		{ label: 'Analytics', href: '/analytics', icon: AnalyticIcon, isActive: false, color: 'gray' },
+		{ label: 'Settings', href: '/settings', icon: SettingIcon, isActive: false, color: 'gray' }
+	]);
+
+	let isCollapsed = $state(false);
+
+	const toggleCollapse = () => {
+		isCollapsed = !isCollapsed;
+	};
+</script>
+
+<!-- Sidebar Container -->
+<aside
+	class={`flex h-screen flex-col border-r border-gray-200 bg-white transition-all duration-300 ease-in-out ${
+		isCollapsed ? 'w-20' : 'w-64'
+	}`}
+>
+	<!-- Logo Section -->
+	<div class="flex items-center justify-between border-b border-gray-200 px-6 py-6">
+		{#if !isCollapsed}
+			<img src={Logo} alt="MerchantLabs Logo" class="h-8 w-auto" />
+		{/if}
+		<button
+			onclick={toggleCollapse}
+			class="ml-auto inline-flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:outline-none"
+			aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+		>
+			<svg
+				class={`h-5 w-5 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}
+				fill="none"
+				stroke="currentColor"
+				viewBox="0 0 24 24"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+			</svg>
+		</button>
+	</div>
+
+	<!-- Navigation Menu -->
+	<nav class="flex-1 space-y-2 overflow-y-auto px-3 py-6">
+		{#each menuItems as item (item.href)}
+			{@const IconComponent = item.icon}
+			<a
+				href={item.href}
+				class={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+					item.isActive
+						? 'bg-orange-50 text-orange-600'
+						: 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
+				}`}
+				aria-current={item.isActive ? 'page' : undefined}
+			>
+				<div
+					class={`flex h-5 w-5 shrink-0 items-center justify-center transition-colors duration-200 ${
+						item.isActive ? 'text-orange-600' : 'text-gray-400 group-hover:text-orange-600'
+					}`}
+				>
+					<IconComponent color={item.isActive ? 'orange' : item.color} />
+				</div>
+				{#if !isCollapsed}
+					<span class="truncate">{item.label}</span>
+				{/if}
+			</a>
+		{/each}
+	</nav>
+
+	<!-- Footer Section (Optional) -->
+	<div class="border-t border-gray-200 px-3 py-4">
+		<button
+			class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+		>
+			<div class="flex h-5 w-5 shrink-0 items-center justify-center text-gray-400">
+				<svg
+					class="h-5 w-5"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+					/>
+				</svg>
+			</div>
+			{#if !isCollapsed}
+				<span class="truncate">Logout</span>
+			{/if}
+		</button>
+	</div>
+</aside>
