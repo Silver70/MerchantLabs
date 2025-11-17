@@ -1,9 +1,9 @@
-import type { QueryResolvers } from './../../../../types.generated';
+import type { QueryResolvers } from "./../../../../types.generated";
 import { db } from "../../../../../db/index";
 import { eq } from "drizzle-orm";
 import { productsTable } from "../../../../../db/schema/catalog";
 
-export const product: NonNullable<QueryResolvers['product']> = async (
+export const product: NonNullable<QueryResolvers["product"]> = async (
   _parent,
   args,
   _ctx
@@ -15,7 +15,11 @@ export const product: NonNullable<QueryResolvers['product']> = async (
         category: true,
         variants: {
           with: {
-            attributes: true,
+            attributes: {
+              with: {
+                attributeValue: true,
+              },
+            },
           },
         },
       },
@@ -23,7 +27,7 @@ export const product: NonNullable<QueryResolvers['product']> = async (
 
     return productData as any;
   } catch (error) {
-    console.error('Error fetching product:', error);
+    console.error("Error fetching product:", error);
     return null;
   }
 };

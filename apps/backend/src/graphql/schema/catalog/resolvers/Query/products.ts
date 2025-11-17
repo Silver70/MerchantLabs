@@ -43,7 +43,11 @@ export const products: NonNullable<QueryResolvers['products']> = async (
         category: true,
         variants: {
           with: {
-            attributes: true,
+            attributes: {
+              with: {
+                attributeValue: true,
+              },
+            },
           },
         },
       },
