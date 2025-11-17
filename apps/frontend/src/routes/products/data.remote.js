@@ -1,4 +1,5 @@
 import { query } from '$app/server';
+import { GET_ALL_PRODUCTS } from '$lib/graphql/productQueries';
 
 const GRAPHQL_URL = process.env.VITE_GRAPHQL_URL || 'http://localhost:4000/graphql';
 
@@ -11,46 +12,7 @@ export const getAllProducts = query(async (first = 20, after = null, filter = nu
 				Accept: 'application/json'
 			},
 			body: JSON.stringify({
-				query: `
-					query GetProducts($first: Int, $after: String, $filter: ProductFilterInput) {
-						products(first: $first, after: $after, filter: $filter) {
-							edges {
-								cursor
-								node {
-									id
-									name
-									slug
-									description
-									category {
-										id
-										name
-										slug
-									}
-									variants {
-										id
-										sku
-										quantityInStock
-										attributes {
-											id
-											attributeId
-											value
-										}
-									}
-									isActive
-									createdAt
-									updatedAt
-								}
-							}
-							pageInfo {
-								hasNextPage
-								hasPreviousPage
-								startCursor
-								endCursor
-								totalCount
-							}
-						}
-					}
-				`,
+				query: GET_ALL_PRODUCTS,
 				variables: {
 					first,
 					after,
