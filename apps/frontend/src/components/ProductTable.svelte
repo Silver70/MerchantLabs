@@ -1,6 +1,7 @@
 <script lang="ts">
 	import DataTable from './DataTable.svelte';
 	import FilterBar from './FilterBar.svelte';
+	import type { Snippet } from 'svelte';
 
 	interface ProductVariant {
 		id: string;
@@ -51,12 +52,28 @@
 		onFilterChange?: (filterId: string, active: boolean) => void;
 	}
 
-	let { products = [], isLoading = false, pagination, onEdit, onDelete, onView, onSort, onPaginationChange, onFilterChange }: Props =
-		$props();
+	let {
+		products = [],
+		isLoading = false,
+		pagination,
+		onEdit,
+		onDelete,
+		onView,
+		onSort,
+		onPaginationChange,
+		onFilterChange
+	}: Props = $props();
 
 	let activeFilters = $state<string[]>(['all']);
 
 	const columns = [
+		{
+			id: 'image',
+			label: '',
+			accessor: (product: Product) => 'image',
+			sortable: false,
+			width: '80px'
+		},
 		{
 			id: 'name',
 			label: 'Product Name',
@@ -72,8 +89,8 @@
 		},
 		{
 			id: 'variants',
-			label: 'SKU',
-			accessor: (product: Product) => product.variants[0]?.sku ?? 'N/A',
+			label: 'Variants',
+			accessor: (product: Product) => product.variants.length,
 			sortable: false
 		},
 		{
@@ -86,20 +103,7 @@
 			id: 'status',
 			label: 'Status',
 			sortable: true,
-			accessor: (product: Product) => product.isActive ? 'Active' : 'Inactive'
-		},
-		{
-			id: 'updated',
-			label: 'Updated',
-			accessor: (product: Product) => {
-				const date = new Date(product.updatedAt);
-				return date.toLocaleDateString('en-US', {
-					year: 'numeric',
-					month: 'short',
-					day: 'numeric'
-				});
-			},
-			sortable: true
+			accessor: (product: Product) => (product.isActive ? 'Active' : 'Inactive')
 		}
 	];
 
@@ -116,10 +120,21 @@
 			{ id: 'all', label: 'All Products', count: products.length },
 			{ id: 'active', label: 'Active', count: products.filter((p) => p.isActive).length },
 			{ id: 'inactive', label: 'Inactive', count: products.filter((p) => !p.isActive).length },
-			{ id: 'in-stock', label: 'In Stock', count: products.filter((p) => (p.variants[0]?.quantityInStock ?? 0) > 0).length },
-			{ id: 'low-stock', label: 'Low Stock', count: products.filter((p) => (p.variants[0]?.quantityInStock ?? 0) > 0 && (p.variants[0]?.quantityInStock ?? 0) <= 10).length }
+			{
+				id: 'in-stock',
+				label: 'In Stock',
+				count: products.filter((p) => (p.variants[0]?.quantityInStock ?? 0) > 0).length
+			},
+			{
+				id: 'low-stock',
+				label: 'Low Stock',
+				count: products.filter(
+					(p) =>
+						(p.variants[0]?.quantityInStock ?? 0) > 0 && (p.variants[0]?.quantityInStock ?? 0) <= 10
+				).length
+			}
 		]}
-		activeFilters={activeFilters}
+		{activeFilters}
 		onFilterChange={(filterId, active) => {
 			if (active) {
 				activeFilters = [...activeFilters, filterId];
@@ -137,7 +152,7 @@
 		{isLoading}
 		emptyMessage="No products found"
 		{onSort}
-		onPaginationChange={onPaginationChange}
+		{onPaginationChange}
 		keyFn={(product) => product.id}
 	/>
 </div>
