@@ -1,6 +1,6 @@
 <script lang="ts">
 	import DataTable from './DataTable.svelte';
-	import type { Snippet } from 'svelte';
+	import FilterBar from './FilterBar.svelte';
 
 	interface ProductVariant {
 		id: string;
@@ -48,10 +48,13 @@
 		onView?: (product: Product) => void;
 		onSort?: (columnId: string, direction: 'asc' | 'desc') => void;
 		onPaginationChange?: (cursor: string | null, direction: 'next' | 'prev') => void;
+		onFilterChange?: (filterId: string, active: boolean) => void;
 	}
 
-	let { products = [], isLoading = false, pagination, onEdit, onDelete, onView, onSort, onPaginationChange }: Props =
+	let { products = [], isLoading = false, pagination, onEdit, onDelete, onView, onSort, onPaginationChange, onFilterChange }: Props =
 		$props();
+
+	let activeFilters = $state<string[]>(['all']);
 
 	const columns = [
 		{
@@ -83,14 +86,7 @@
 			id: 'status',
 			label: 'Status',
 			sortable: true,
-			render: (product: Product) => {
-				const statusClasses = product.isActive
-					? 'bg-green-100 text-green-800'
-					: 'bg-red-100 text-red-800';
-				return `<span class="inline-block px-3 py-1 rounded-full text-sm font-medium ${statusClasses}">
-					${product.isActive ? 'Active' : 'Inactive'}
-				</span>`;
-			}
+			accessor: (product: Product) => product.isActive ? 'Active' : 'Inactive'
 		},
 		{
 			id: 'updated',
@@ -108,20 +104,40 @@
 	];
 
 	const rowActions = [
-		...(onView ? [{ label: 'View', onClick: onView, variant: 'secondary' as const }] : []),
-		...(onEdit ? [{ label: 'Edit', onClick: onEdit, variant: 'primary' as const }] : []),
+		...(onView ? [{ label: 'View', onClick: onView, variant: 'default' as const }] : []),
+		...(onEdit ? [{ label: 'Edit', onClick: onEdit, variant: 'default' as const }] : []),
 		...(onDelete ? [{ label: 'Delete', onClick: onDelete, variant: 'danger' as const }] : [])
 	];
 </script>
 
-<DataTable
-	data={products}
-	{columns}
-	rowActions={rowActions.length > 0 ? rowActions : undefined}
-	{pagination}
-	{isLoading}
-	emptyMessage="No products found"
-	{onSort}
-	onPaginationChange={onPaginationChange}
-	keyFn={(product) => product.id}
-/>
+<div>
+	<FilterBar
+		filters={[
+			{ id: 'all', label: 'All Products', count: products.length },
+			{ id: 'active', label: 'Active', count: products.filter((p) => p.isActive).length },
+			{ id: 'inactive', label: 'Inactive', count: products.filter((p) => !p.isActive).length },
+			{ id: 'in-stock', label: 'In Stock', count: products.filter((p) => (p.variants[0]?.quantityInStock ?? 0) > 0).length },
+			{ id: 'low-stock', label: 'Low Stock', count: products.filter((p) => (p.variants[0]?.quantityInStock ?? 0) > 0 && (p.variants[0]?.quantityInStock ?? 0) <= 10).length }
+		]}
+		activeFilters={activeFilters}
+		onFilterChange={(filterId, active) => {
+			if (active) {
+				activeFilters = [...activeFilters, filterId];
+			} else {
+				activeFilters = activeFilters.filter((f) => f !== filterId);
+			}
+			onFilterChange?.(filterId, active);
+		}}
+	/>
+	<DataTable
+		data={products}
+		{columns}
+		rowActions={rowActions.length > 0 ? rowActions : undefined}
+		{pagination}
+		{isLoading}
+		emptyMessage="No products found"
+		{onSort}
+		onPaginationChange={onPaginationChange}
+		keyFn={(product) => product.id}
+	/>
+</div>

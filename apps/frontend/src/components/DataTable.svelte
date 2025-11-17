@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import DropdownMenu from './DropdownMenu.svelte';
 
 	interface ColumnDef<T> {
 		id: string;
@@ -14,7 +15,7 @@
 		label: string;
 		icon?: string;
 		onClick: (item: T) => void;
-		variant?: 'primary' | 'secondary' | 'danger';
+		variant?: 'default' | 'danger';
 	}
 
 	interface PaginationState {
@@ -96,14 +97,14 @@
 		return keyFn(item, index);
 	}
 
-	function getActionButtonClasses(variant: string) {
-		const baseClasses = 'px-3 py-1 text-sm rounded transition-colors';
-		const variants = {
-			primary: 'bg-orange-600 text-white hover:bg-orange-700',
-			secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-			danger: 'bg-red-600 text-white hover:bg-red-700'
-		};
-		return `${baseClasses} ${variants[variant as keyof typeof variants] || variants.secondary}`;
+	function getDropdownMenuItems<T extends object>(item: T, actions: RowAction<T>[]) {
+		return actions.map((action) => ({
+			label: action.label,
+			icon: action.icon,
+			variant: action.variant || 'default',
+			onClick: () => action.onClick(item),
+			disabled: false
+		}));
 	}
 </script>
 
@@ -120,14 +121,14 @@
 		<table class="w-full border-collapse">
 			<!-- Header -->
 			<thead>
-				<tr class="border-b border-gray-200 bg-gray-50">
+				<tr class="border-b-2 border-gray-300 bg-gray-100">
 					{#each columns as column (column.id)}
 						<th
-							class={`px-6 py-3 text-left text-sm font-semibold text-gray-700 ${column.width ? `w-${column.width}` : ''}`}
+							class={`px-6 py-4 text-left text-sm font-semibold text-gray-800 ${column.width ? `w-${column.width}` : ''}`}
 						>
 							{#if column.sortable}
 								<button
-									class="flex items-center gap-2 hover:text-orange-600 transition-colors"
+									class="flex items-center gap-2 transition-colors hover:text-orange-600"
 									onclick={() => handleSort(column.id)}
 								>
 									<span>{column.label}</span>
@@ -143,7 +144,7 @@
 						</th>
 					{/each}
 					{#if rowActions.length > 0}
-						<th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-800">Actions</th>
 					{/if}
 				</tr>
 			</thead>
@@ -151,7 +152,7 @@
 			<!-- Body -->
 			<tbody>
 				{#each data as item, index (getRowKey(item, index))}
-					<tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+					<tr class="border-b border-gray-200 transition-colors hover:bg-gray-50">
 						{#each columns as column (column.id)}
 							<td class="px-6 py-4 text-sm text-gray-700">
 								{#if column.render}
@@ -163,20 +164,10 @@
 						{/each}
 						{#if rowActions.length > 0}
 							<td class="px-6 py-4 text-sm">
-								<div class="flex gap-2">
-									{#each rowActions as action (action.label)}
-										<button
-											class={getActionButtonClasses(action.variant || 'secondary')}
-											onclick={() => action.onClick(item)}
-											title={action.label}
-										>
-											{#if action.icon}
-												<span>{action.icon}</span>
-											{/if}
-											{action.label}
-										</button>
-									{/each}
-								</div>
+								<DropdownMenu
+									items={getDropdownMenuItems(item as any, rowActions)}
+									triggerLabel="⋯"
+								/>
 							</td>
 						{/if}
 					</tr>
@@ -194,14 +185,14 @@
 				</div>
 				<div class="flex gap-2">
 					<button
-						class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+						class="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
 						onclick={handlePrevPage}
 						disabled={!pagination.hasPreviousPage || isLoading}
 					>
 						← Previous
 					</button>
 					<button
-						class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+						class="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
 						onclick={handleNextPage}
 						disabled={!pagination.hasNextPage || isLoading}
 					>

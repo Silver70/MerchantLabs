@@ -23,6 +23,12 @@
         }
     }
 
+    function handleFilterChange(filterId: string, active: boolean) {
+        console.log(`Filter ${filterId} is ${active ? 'enabled' : 'disabled'}`);
+        // Implement filtering logic here
+        // You can send filter params to your backend GraphQL query
+    }
+
     function handleEdit(product: any) {
         console.log('Edit product:', product);
         // Navigate to edit page or open edit modal
@@ -60,6 +66,7 @@
             }}
             onSort={handleSort}
             onPaginationChange={handlePaginationChange}
+            onFilterChange={handleFilterChange}
             onEdit={handleEdit}
             onDelete={handleDelete}
             onView={handleView}
