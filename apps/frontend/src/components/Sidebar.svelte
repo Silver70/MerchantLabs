@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import Logo from '$lib/assets/Logo.svg';
 	import LogoIcon from '$lib/assets/LogoIcon.svg';
 	import DashboardIcon from '$lib/assets/icons/dashboard_Icon.svelte';
@@ -12,7 +13,6 @@
 		label: string;
 		href: string;
 		icon: any;
-		isActive?: boolean;
 		color?: string;
 	}
 
@@ -21,19 +21,27 @@
 		onToggleCollapse?: () => void;
 	}
 
-	let { isCollapsed = $bindable(false), onToggleCollapse }: SidebarProps = $props();
+	let { isCollapsed = $bindable(false) }: SidebarProps = $props();
 
 	// Internal state
 	let menuItems = $state<MenuItem[]>([
-		{ label: 'Dashboard', href: '/', icon: DashboardIcon, isActive: true, color: 'gray' },
-		{ label: 'Products', href: '/products', icon: ProductIcon, isActive: false, color: 'gray' },
-		{ label: 'Customers', href: '/customers', icon: CustomerIcon, isActive: false, color: 'gray' },
-		{ label: 'Discounts', href: '/discounts', icon: DiscountIcon, isActive: false, color: 'gray' },
-		{ label: 'Analytics', href: '/analytics', icon: AnalyticIcon, isActive: false, color: 'gray' },
-		{ label: 'Settings', href: '/settings', icon: SettingIcon, isActive: false, color: 'gray' }
+		{ label: 'Dashboard', href: '/', icon: DashboardIcon, color: 'gray' },
+		{ label: 'Products', href: '/products', icon: ProductIcon, color: 'gray' },
+		{ label: 'Customers', href: '/customers', icon: CustomerIcon, color: 'gray' },
+		{ label: 'Discounts', href: '/discounts', icon: DiscountIcon, color: 'gray' },
+		{ label: 'Analytics', href: '/analytics', icon: AnalyticIcon, color: 'gray' },
+		{ label: 'Settings', href: '/settings', icon: SettingIcon, color: 'gray' }
 	]);
 
 	let hoveredItem = $state<string | null>(null);
+
+	// Check if a menu item is active based on current route
+	const isItemActive = (href: string): boolean => {
+		if (href === '/') {
+			return $page.url.pathname === '/';
+		}
+		return $page.url.pathname.startsWith(href);
+	};
 </script>
 
 <!-- Sidebar Container -->
@@ -55,22 +63,23 @@
 	<nav class="flex-1 space-y-2 overflow-y-auto px-3 py-6">
 		{#each menuItems as item (item.href)}
 			{@const IconComponent = item.icon}
+			{@const itemIsActive = isItemActive(item.href)}
 			{@const isItemHovered = hoveredItem === item.href}
-			{@const iconColor = item.isActive || isItemHovered ? 'orange' : item.color}
+			{@const iconColor = itemIsActive || isItemHovered ? 'orange' : item.color}
 			<a
 				href={item.href}
 				class={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
-					item.isActive
+					itemIsActive
 						? 'bg-orange-50 text-orange-600'
 						: 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
 				}`}
-				aria-current={item.isActive ? 'page' : undefined}
+				aria-current={itemIsActive ? 'page' : undefined}
 				onmouseenter={() => (hoveredItem = item.href)}
 				onmouseleave={() => (hoveredItem = null)}
 			>
 				<div
 					class={`flex h-5 w-5 shrink-0 items-center justify-center transition-colors duration-200 ${
-						item.isActive ? 'text-orange-600' : 'text-gray-400 group-hover:text-orange-600'
+						itemIsActive ? 'text-orange-600' : 'text-gray-400 group-hover:text-orange-600'
 					}`}
 				>
 					<IconComponent color={iconColor} />
