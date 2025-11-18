@@ -48,8 +48,8 @@
 			'w-full text-left px-4 py-2 text-sm rounded transition-colors flex items-center gap-2';
 		const variantClasses =
 			variant === 'danger'
-				? 'text-red-600 hover:bg-red-50'
-				: 'text-gray-700 hover:bg-gray-100';
+				? 'text-danger-600 hover:bg-danger-50'
+				: 'text-neutral-700 hover:bg-neutral-100';
 		const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
 		return `${baseClasses} ${variantClasses} ${disabledClasses}`;
 	}
@@ -58,7 +58,7 @@
 <div class="relative inline-block" bind:this={dropdownElement}>
 	<!-- Trigger Button -->
 	<button
-		class="p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+		class="p-2 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
 		title="More actions"
 		onclick={toggleDropdown}
 	>
@@ -68,7 +68,7 @@
 	<!-- Dropdown Menu -->
 	{#if isOpen}
 		<div
-			class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+			class="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-lg shadow-lg z-50"
 			role="menu"
 		>
 			<div class="py-1">

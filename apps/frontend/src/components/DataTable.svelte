@@ -111,24 +111,24 @@
 <div class="w-full overflow-x-auto">
 	{#if isLoading}
 		<div class="flex items-center justify-center py-8">
-			<div class="text-gray-500">Loading...</div>
+			<div class="text-neutral-500">Loading...</div>
 		</div>
 	{:else if data.length === 0}
 		<div class="flex items-center justify-center py-8">
-			<div class="text-gray-500">{emptyMessage}</div>
+			<div class="text-neutral-500">{emptyMessage}</div>
 		</div>
 	{:else}
 		<table class="w-full border-collapse">
 			<!-- Header -->
 			<thead>
-				<tr class="border-b-2 border-gray-300 bg-gray-100">
+				<tr class="border-b-2 border-neutral-300 bg-neutral-100">
 					{#each columns as column (column.id)}
 						<th
-							class={`px-6 py-4 text-left text-sm font-semibold text-gray-800 ${column.width ? `w-${column.width}` : ''}`}
+							class={`px-6 py-4 text-left text-sm font-semibold text-neutral-800 ${column.width ? `w-${column.width}` : ''}`}
 						>
 							{#if column.sortable}
 								<button
-									class="flex items-center gap-2 transition-colors hover:text-orange-600"
+									class="flex items-center gap-2 transition-colors hover:text-primary-600"
 									onclick={() => handleSort(column.id)}
 								>
 									<span>{column.label}</span>
@@ -144,7 +144,7 @@
 						</th>
 					{/each}
 					{#if rowActions.length > 0}
-						<th class="px-6 py-4 text-left text-sm font-semibold text-gray-800">Actions</th>
+						<th class="px-6 py-4 text-left text-sm font-semibold text-neutral-800">Actions</th>
 					{/if}
 				</tr>
 			</thead>
@@ -152,14 +152,14 @@
 			<!-- Body -->
 			<tbody>
 				{#each data as item, index (getRowKey(item, index))}
-					<tr class="border-b border-gray-200 transition-colors hover:bg-gray-50">
+					<tr class="border-b border-neutral-200 transition-colors hover:bg-neutral-50">
 						{#each columns as column (column.id)}
-							<td class={`px-6 py-4 text-sm text-gray-700 ${column.id === 'image' ? 'flex items-center justify-center' : ''}`}>
+							<td class={`px-6 py-4 text-sm text-neutral-700 ${column.id === 'image' ? 'flex items-center justify-center' : ''}`}>
 								{#if column.render}
 									{@render column.render(item)}
 								{:else if column.id === 'image'}
-									<div class="flex items-center justify-center w-16 h-16 bg-gray-200 rounded-lg border border-gray-300">
-										<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<div class="flex items-center justify-center w-16 h-16 bg-neutral-200 rounded-lg border border-neutral-300">
+										<svg class="w-8 h-8 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
 										</svg>
 									</div>
@@ -183,22 +183,22 @@
 
 		<!-- Pagination Controls -->
 		{#if pagination}
-			<div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-3">
-				<div class="text-sm text-gray-600">
+			<div class="flex items-center justify-between border-t border-neutral-200 bg-neutral-50 px-6 py-3">
+				<div class="text-sm text-neutral-600">
 					{pagination.currentPage && pagination.pageSize
 						? `Page ${pagination.currentPage} · ${pagination.pageSize} items per page`
 						: `Total: ${pagination.totalCount} items`}
 				</div>
 				<div class="flex gap-2">
 					<button
-						class="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+						class="rounded border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
 						onclick={handlePrevPage}
 						disabled={!pagination.hasPreviousPage || isLoading}
 					>
 						← Previous
 					</button>
 					<button
-						class="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+						class="rounded border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
 						onclick={handleNextPage}
 						disabled={!pagination.hasNextPage || isLoading}
 					>

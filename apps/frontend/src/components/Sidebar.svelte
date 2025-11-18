@@ -46,7 +46,7 @@
 
 <!-- Sidebar Container -->
 <aside
-	class={`flex h-screen flex-col border-r border-gray-200 bg-white transition-all duration-300 ease-in-out ${
+	class={`flex h-screen flex-col border-r border-neutral-200 bg-white transition-all duration-300 ease-in-out ${
 		isCollapsed ? 'w-20' : 'w-64'
 	}`}
 >
@@ -70,8 +70,8 @@
 				href={item.href}
 				class={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
 					itemIsActive
-						? 'bg-orange-50 text-orange-600'
-						: 'text-gray-700 hover:bg-orange-50 hover:text-orange-600'
+						? 'bg-primary-50 text-primary-600'
+						: 'text-neutral-700 hover:bg-primary-50 hover:text-primary-600'
 				}`}
 				aria-current={itemIsActive ? 'page' : undefined}
 				onmouseenter={() => (hoveredItem = item.href)}
@@ -79,7 +79,7 @@
 			>
 				<div
 					class={`flex h-5 w-5 shrink-0 items-center justify-center transition-colors duration-200 ${
-						itemIsActive ? 'text-orange-600' : 'text-gray-400 group-hover:text-orange-600'
+						itemIsActive ? 'text-primary-600' : 'text-neutral-400 group-hover:text-primary-600'
 					}`}
 				>
 					<IconComponent color={iconColor} />
@@ -92,12 +92,12 @@
 	</nav>
 
 	<!-- Footer Section (Optional) -->
-	<div class="border-t border-gray-200 px-3 py-4">
+	<div class="border-t border-neutral-200 px-3 py-4">
 		<button
-			class="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-orange-50 hover:text-orange-600"
+			class="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 transition-all duration-200 hover:bg-primary-50 hover:text-primary-600"
 		>
 			<div
-				class="flex h-5 w-5 shrink-0 items-center justify-center text-gray-400 transition-colors duration-200 group-hover:text-orange-600"
+				class="flex h-5 w-5 shrink-0 items-center justify-center text-neutral-400 transition-colors duration-200 group-hover:text-primary-600"
 			>
 				<svg
 					class="h-5 w-5"

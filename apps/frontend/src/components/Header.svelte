@@ -11,14 +11,14 @@
 
 <!-- Header Container -->
 <header
-	class="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6 transition-all duration-300"
+	class="flex h-16 items-center justify-between border-b border-neutral-200 bg-white px-6 transition-all duration-300"
 >
 	<!-- Left Section: Toggle Button + Search -->
 	<div class="flex items-center gap-4">
 		<!-- Toggle Button -->
 		<button
 			onclick={onToggleSidebar}
-			class="inline-flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-orange-50 hover:text-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-0 focus:outline-none"
+			class="inline-flex items-center justify-center rounded-lg p-2 text-neutral-600 transition-colors hover:bg-primary-50 hover:text-primary-600 focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:outline-none"
 			aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
 		>
 			<svg
@@ -37,10 +37,10 @@
 			<input
 				type="text"
 				placeholder="Search..."
-				class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 pl-10 text-sm transition-colors placeholder-gray-400 focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-orange-500"
+				class="w-full rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-2 pl-10 text-sm transition-colors placeholder-neutral-400 focus:border-primary-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary-500"
 			/>
 			<svg
-				class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
+				class="absolute left-3 top-2.5 h-4 w-4 text-neutral-400"
 				fill="none"
 				stroke="currentColor"
 				viewBox="0 0 24 24"
@@ -60,7 +60,7 @@
 	<div class="flex items-center gap-2">
 		<!-- Notifications Bell -->
 		<button
-			class="relative inline-flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-orange-50 hover:text-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-0 focus:outline-none"
+			class="relative inline-flex items-center justify-center rounded-lg p-2 text-neutral-600 transition-colors hover:bg-primary-50 hover:text-primary-600 focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:outline-none"
 			aria-label="Notifications"
 		>
 			<svg
@@ -87,7 +87,7 @@
 
 		<!-- Messages -->
 		<button
-			class="relative inline-flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-orange-50 hover:text-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-0 focus:outline-none"
+			class="relative inline-flex items-center justify-center rounded-lg p-2 text-neutral-600 transition-colors hover:bg-primary-50 hover:text-primary-600 focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:outline-none"
 			aria-label="Messages"
 		>
 			<svg
@@ -106,18 +106,18 @@
 			</svg>
 			<!-- Message Badge -->
 			<span
-				class="absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs font-semibold text-white"
+				class="absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-primary-500 text-xs font-semibold text-white"
 			>
 				2
 			</span>
 		</button>
 
 		<!-- Divider -->
-		<div class="mx-2 h-6 border-l border-gray-200"></div>
+		<div class="mx-2 h-6 border-l border-neutral-200"></div>
 
 		<!-- User Avatar -->
 		<button
-			class="inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-gray-200 transition-colors hover:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:ring-offset-0 focus:outline-none"
+			class="inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-neutral-200 transition-colors hover:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:outline-none"
 			aria-label="User menu"
 		>
 			<img

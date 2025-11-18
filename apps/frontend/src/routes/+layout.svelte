@@ -29,7 +29,7 @@
 			<Header {isCollapsed} onToggleSidebar={handleToggleSidebar} />
 
 			<!-- Page Content -->
-			<main class="flex-1 overflow-y-auto bg-gray-50">
+			<main class="flex-1 overflow-y-auto bg-neutral-50">
 				{@render children()}
 			</main>
 		</div>

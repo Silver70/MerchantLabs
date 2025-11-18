@@ -36,8 +36,8 @@
 		<button
 			class={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
 				isFilterActive(filter.id)
-					? 'bg-orange-600 text-white shadow-md'
-					: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+					? 'bg-primary-600 text-white shadow-md'
+					: 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
 			}`}
 			onclick={() => handleFilterClick(filter.id)}
 		>
@@ -50,7 +50,7 @@
 
 	{#if activeFilters.length > 0}
 		<button
-			class="ml-2 px-3 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+			class="ml-2 px-3 py-2 text-sm text-neutral-600 hover:text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
 			onclick={handleClearFilters}
 			title={clearFiltersLabel}
 		>
