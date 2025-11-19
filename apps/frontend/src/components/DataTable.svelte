@@ -108,7 +108,7 @@
 	}
 </script>
 
-<div class="w-full overflow-x-auto">
+<div class="w-full overflow-x-auto bg-white  rounded-2xl">
 	{#if isLoading}
 		<div class="flex items-center justify-center py-8">
 			<div class="text-neutral-500">Loading...</div>
@@ -121,7 +121,7 @@
 		<table class="w-full border-collapse">
 			<!-- Header -->
 			<thead>
-				<tr class="border-b-2 border-neutral-300 bg-neutral-100">
+				<tr class=" bg-primary-50">
 					{#each columns as column (column.id)}
 						<th
 							class={`px-6 py-4 text-left text-sm font-semibold text-neutral-800 ${column.width ? `w-${column.width}` : ''}`}

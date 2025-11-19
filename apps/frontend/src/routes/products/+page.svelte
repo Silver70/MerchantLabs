@@ -49,7 +49,10 @@
 
 <div class="m-10">
 	<div class="mb-6 flex items-center justify-between">
-		<h1 class="text-2xl font-bold text-orange-600">Products</h1>
+		<div class="flex flex-col gap-2">
+			<h1 class="text-3xl font-semibold">Products</h1>
+			<p class="text-gray-500 text-sm">Manage All your products here</p>
+		</div>
 		<button
 			class="rounded-lg bg-orange-600 px-6 py-2 font-medium text-white shadow-md transition-colors hover:bg-orange-700 hover:shadow-lg"
 			onclick={() => {

@@ -69,7 +69,7 @@
 	const columns = [
 		{
 			id: 'image',
-			label: '',
+			label: 'Image',
 			accessor: (product: Product) => 'image',
 			sortable: false,
 			width: '80px'
