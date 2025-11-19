@@ -51,9 +51,15 @@
 	}`}
 >
 	<!-- Logo Section -->
-	<div class="flex items-center justify-center px-4 py-6">
+	<div class="flex items-center px-4 py-6">
 		{#if !isCollapsed}
-			<img src={Logo} alt="MerchantLabs Logo" class="h-12" />
+		<div class="flex items-center gap-2">
+			<img src={LogoIcon} alt="MerchantLabs Logo" class="h-10" />
+			<div class="flex flex-col">
+				<p class="text-lg font-semibold">Merchant Labs</p>
+				<p class="text-sm text-neutral-500">Enterprise</p>
+			</div>
+		</div>
 		{:else}
 			<img src={LogoIcon} alt="MerchantLabs Logo" class="h-10" />
 		{/if}
