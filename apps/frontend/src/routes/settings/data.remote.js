@@ -95,3 +95,33 @@ export const createRegion = form(
 		}
 	}
 );
+
+export const getAllChannels = query(async (first = 20, after = null, filter = null) => {
+	const response = await fetch(GRAPHQL_URL, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json'
+		},
+		body: JSON.stringify({
+			query: GET_ALL_CHANNELS,
+			variables: {
+				first,
+				after,
+				filter
+			}
+		})
+	});
+
+	if (!response.ok) {
+		throw new Error(`GraphQL request failed: ${response.statusText}`);
+	}
+
+	const result = await response.json();
+
+	if (result.errors) {
+		throw new Error(result.errors[0].message);
+	}
+
+	return result.data.channels;
+});

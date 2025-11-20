@@ -1,10 +1,15 @@
 <script lang="ts">
 	import DataTable from '../../components/DataTable.svelte';
-	import { COMMON_COUNTRY_CODES, COMMON_CURRENCIES, COMMON_LANGUAGES } from '$lib/validations/channel';
-	import { getAllRegions, createRegion } from './data.remote';
+	import {
+		COMMON_COUNTRY_CODES,
+		COMMON_CURRENCIES,
+		COMMON_LANGUAGES
+	} from '$lib/validations/channel';
+	import { getAllRegions, createRegion, getAllChannels } from './data.remote';
 
 	// Load regions data from backend
 	let regionsPromise = $state(getAllRegions());
+	let channelPromise = $state(getAllChannels());
 
 	// Keep hardcoded channels data for now
 	let channelsData = $state([
@@ -126,7 +131,7 @@
 		{
 			id: 'region',
 			label: 'Region',
-			accessor: (channel: any) => channel.region
+			accessor: (channel: any) => channel.region?.name || 'N/A'
 		},
 		{
 			id: 'currency',
@@ -193,7 +198,6 @@
 			variant: 'danger' as const
 		}
 	];
-	// Remove this - we'll use the form fields directly in the template
 </script>
 
 <main class="m-10">
@@ -279,12 +283,18 @@
 				</button>
 			</div>
 
-			<DataTable
-				data={channelsData}
-				columns={channelColumns}
-				rowActions={channelActions}
-				keyFn={(channel) => channel.id}
-			/>
+			{#await channelPromise}
+				<div class="py-8 text-center text-neutral-500">Loading channels...</div>
+			{:then data}
+				<DataTable
+					data={data.edges.map((edge: any) => edge.node)}
+					columns={channelColumns}
+					rowActions={channelActions}
+					keyFn={(channel) => channel.id}
+				/>
+			{:catch error}
+				<p class="text-red-500">Error loading channels: {error.message}</p>
+			{/await}
 		</div>
 	{/if}
 
@@ -467,7 +477,7 @@
 		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
 			<div class="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
 				<h3 class="mb-6 text-lg font-semibold">Add New Channel</h3>
-				
+
 				<form class="space-y-4">
 					<!-- Channel Name -->
 					<div>
