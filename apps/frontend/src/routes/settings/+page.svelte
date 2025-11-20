@@ -4,7 +4,7 @@
 	import { getAllRegions, createRegion } from './data.remote';
 
 	// Load regions data from backend
-	let regionsPromise = getAllRegions();
+	let regionsPromise = $state(getAllRegions());
 
 	// Keep hardcoded channels data for now
 	let channelsData = $state([
@@ -42,6 +42,24 @@
 	let selectedCountries = $state<string[]>([]);
 	let countrySearchTerm = $state('');
 	let showCountryDropdown = $state(false);
+
+	// Reset form and close modal on successful submission
+	function resetRegionModal() {
+		showRegionModal = false;
+		selectedCountries = [];
+		countrySearchTerm = '';
+		showCountryDropdown = false;
+		// Refresh regions data
+		regionsPromise = getAllRegions();
+	}
+
+	// Watch for successful form submission
+	$effect(() => {
+		// Access the result from the remote function
+		if (createRegion.result?.success) {
+			resetRegionModal();
+		}
+	});
 
 	// Filter countries based on search term
 	const filteredCountries = $derived(
@@ -320,7 +338,11 @@
 						{/if}
 
 						<!-- Hidden input to submit selected countries -->
-						<select {...createRegion.fields.countryCodes.as('select multiple')} multiple style="display: none;">
+						<select
+							{...createRegion.fields.countryCodes.as('select multiple')}
+							multiple
+							style="display: none;"
+						>
 							{#each selectedCountries as country}
 								<option value={country} selected>{country}</option>
 							{/each}

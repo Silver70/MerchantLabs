@@ -44,12 +44,8 @@ export const getAllRegions = query(async (first = 20, after = null, filter = nul
 export const createRegion = form(
 	CreateRegionSchema,
 	async ({ name, countryCodes, taxRate, taxCode }) => {
-		console.log('Creating region with data:', { name, countryCodes, taxRate, taxCode });
-
 		// countryCodes should already be an array from the select multiple field
 		const countryCodesArray = Array.isArray(countryCodes) ? countryCodes : [];
-
-		console.log('Processed countryCodes:', countryCodesArray);
 
 		try {
 			const response = await fetch(GRAPHQL_URL, {
@@ -71,32 +67,28 @@ export const createRegion = form(
 				})
 			});
 
-			console.log('GraphQL response status:', response.status);
-
 			if (!response.ok) {
 				const errorText = await response.text();
-				console.error('GraphQL request failed:', errorText);
 				throw new Error(`Failed to create region: ${response.status} ${response.statusText}`);
 			}
 
 			const result = await response.json();
-			console.log('GraphQL response:', result);
 
 			// Check for GraphQL errors
 			if (result.errors) {
-				console.error('GraphQL errors:', result.errors);
 				throw new Error(result.errors[0]?.message || 'GraphQL error');
 			}
 
 			// Check mutation success
 			if (!result.data?.createRegion?.success) {
 				const errorMessage = result.data?.createRegion?.error?.message || 'Failed to create region';
-				console.error('Mutation failed:', errorMessage);
 				throw new Error(errorMessage);
 			}
 
-			console.log('Region created successfully:', result.data.createRegion.data);
-			redirect(303, '/settings');
+			// Return success response instead of redirecting
+			return {
+				success: true
+			};
 		} catch (error) {
 			console.error('Error in createRegion:', error);
 			throw error; // Re-throw to show user the error
