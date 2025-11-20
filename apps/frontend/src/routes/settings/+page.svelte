@@ -1,6 +1,6 @@
 <script lang="ts">
 	import DataTable from '../../components/DataTable.svelte';
-	import { COMMON_COUNTRY_CODES } from '$lib/validations/channel';
+	import { COMMON_COUNTRY_CODES, COMMON_CURRENCIES, COMMON_LANGUAGES } from '$lib/validations/channel';
 	import { getAllRegions, createRegion } from './data.remote';
 
 	// Load regions data from backend
@@ -462,26 +462,133 @@
 		</div>
 	{/if}
 
-	<!-- Channel Modal (placeholder) -->
+	<!-- Channel Modal -->
 	{#if showChannelModal}
 		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-			<div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-				<h3 class="mb-4 text-lg font-semibold">Add New Channel</h3>
-				<p class="mb-6 text-neutral-600">Channel creation form will be implemented here.</p>
-				<div class="flex justify-end gap-3">
-					<button
-						class="px-4 py-2 text-neutral-600 transition-colors hover:text-neutral-800"
-						onclick={() => (showChannelModal = false)}
-					>
-						Cancel
-					</button>
-					<button
-						class="rounded bg-primary-600 px-4 py-2 text-white transition-colors hover:bg-primary-700"
-						onclick={() => (showChannelModal = false)}
-					>
-						Create Channel
-					</button>
-				</div>
+			<div class="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
+				<h3 class="mb-6 text-lg font-semibold">Add New Channel</h3>
+				
+				<form class="space-y-4">
+					<!-- Channel Name -->
+					<div>
+						<label for="channelName" class="mb-2 block text-sm font-medium text-neutral-700">
+							Channel Name <span class="text-red-500">*</span>
+						</label>
+						<input
+							type="text"
+							id="channelName"
+							name="name"
+							placeholder="e.g., Main Store, US Store"
+							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
+							required
+						/>
+					</div>
+
+					<!-- Channel Slug -->
+					<div>
+						<label for="channelSlug" class="mb-2 block text-sm font-medium text-neutral-700">
+							Slug <span class="text-red-500">*</span>
+						</label>
+						<input
+							type="text"
+							id="channelSlug"
+							name="slug"
+							placeholder="e.g., main-store, us-store"
+							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
+							required
+						/>
+						<p class="mt-1 text-xs text-neutral-500">
+							URL-friendly identifier (lowercase, numbers, hyphens only)
+						</p>
+					</div>
+
+					<!-- Region Selection -->
+					<div>
+						<label for="regionSelect" class="mb-2 block text-sm font-medium text-neutral-700">
+							Region <span class="text-red-500">*</span>
+						</label>
+						<select
+							id="regionSelect"
+							name="regionId"
+							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
+							required
+						>
+							<option value="">Select a region</option>
+							{#await regionsPromise then data}
+								{#each data.edges as edge}
+									<option value={edge.node.id}>{edge.node.name}</option>
+								{/each}
+							{/await}
+						</select>
+					</div>
+
+					<!-- Currency -->
+					<div>
+						<label for="currencySelect" class="mb-2 block text-sm font-medium text-neutral-700">
+							Currency <span class="text-red-500">*</span>
+						</label>
+						<select
+							id="currencySelect"
+							name="currencyCode"
+							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
+							required
+						>
+							<option value="">Select currency</option>
+							{#each COMMON_CURRENCIES as currency}
+								<option value={currency.code}>{currency.code} - {currency.name}</option>
+							{/each}
+						</select>
+					</div>
+
+					<!-- Tax Inclusive -->
+					<div>
+						<label class="flex items-center gap-3">
+							<input
+								type="checkbox"
+								name="taxInclusive"
+								class="rounded border-neutral-300 text-primary-600 focus:ring-2 focus:ring-primary-500"
+							/>
+							<span class="text-sm font-medium text-neutral-700">Tax Inclusive Pricing</span>
+						</label>
+						<p class="mt-1 text-xs text-neutral-500">
+							Check if prices include tax (e.g., VAT included in price)
+						</p>
+					</div>
+
+					<!-- Default Language -->
+					<div>
+						<label for="languageSelect" class="mb-2 block text-sm font-medium text-neutral-700">
+							Default Language (Optional)
+						</label>
+						<select
+							id="languageSelect"
+							name="defaultLanguage"
+							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
+						>
+							<option value="">Select language</option>
+							{#each COMMON_LANGUAGES as language}
+								<option value={language.code}>{language.name} ({language.code})</option>
+							{/each}
+						</select>
+					</div>
+
+					<!-- Form Actions -->
+					<div class="flex justify-end gap-3 pt-4">
+						<button
+							type="button"
+							class="px-4 py-2 text-neutral-600 transition-colors hover:text-neutral-800"
+							onclick={() => (showChannelModal = false)}
+						>
+							Cancel
+						</button>
+						<button
+							type="submit"
+							class="rounded-lg bg-primary-600 px-6 py-2 text-white shadow-md transition-colors hover:bg-primary-700 hover:shadow-lg"
+						>
+							Create Channel
+						</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	{/if}
