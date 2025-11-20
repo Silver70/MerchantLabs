@@ -1,31 +1,12 @@
-
-
-
 <script lang="ts">
 	import DataTable from '../../components/DataTable.svelte';
-	
-	// Mock data for now - replace with actual GraphQL queries
-	let regionsData = $state([
-		{
-			id: '1',
-			name: 'North America',
-			countryCodes: ['US', 'CA'],
-			taxRate: 8.25,
-			taxCode: 'NA_TAX',
-			createdAt: '2023-01-15',
-			updatedAt: '2023-01-15'
-		},
-		{
-			id: '2',
-			name: 'Europe',
-			countryCodes: ['DE', 'FR', 'ES', 'IT'],
-			taxRate: 19.0,
-			taxCode: 'EU_VAT',
-			createdAt: '2023-01-15',
-			updatedAt: '2023-01-15'
-		}
-	]);
+	import { COMMON_COUNTRY_CODES } from '$lib/validations/channel';
+	import { getAllRegions, createRegion } from './data.remote';
 
+	// Load regions data from backend
+	let regionsPromise = getAllRegions();
+
+	// Keep hardcoded channels data for now
 	let channelsData = $state([
 		{
 			id: '1',
@@ -57,6 +38,30 @@
 	let showRegionModal = $state(false);
 	let showChannelModal = $state(false);
 
+	// Form state for region modal
+	let selectedCountries = $state<string[]>([]);
+	let countrySearchTerm = $state('');
+	let showCountryDropdown = $state(false);
+
+	// Filter countries based on search term
+	const filteredCountries = $derived(
+		COMMON_COUNTRY_CODES.filter(
+			(code) =>
+				code.toLowerCase().includes(countrySearchTerm.toLowerCase()) &&
+				!selectedCountries.includes(code)
+		)
+	);
+
+	function addCountry(code: string) {
+		selectedCountries = [...selectedCountries, code];
+		countrySearchTerm = '';
+		showCountryDropdown = false;
+	}
+
+	function removeCountry(code: string) {
+		selectedCountries = selectedCountries.filter((c) => c !== code);
+	}
+
 	// Region table columns
 	const regionColumns = [
 		{
@@ -68,22 +73,22 @@
 		{
 			id: 'countries',
 			label: 'Countries',
-			accessor: (region: any) => region.countryCodes.join(', '),
+			accessor: (region: any) => region.countryCodes.join(', ')
 		},
 		{
 			id: 'taxRate',
 			label: 'Tax Rate',
-			accessor: (region: any) => `${region.taxRate}%`,
+			accessor: (region: any) => `${region.taxRate}%`
 		},
 		{
 			id: 'taxCode',
 			label: 'Tax Code',
-			accessor: (region: any) => region.taxCode || 'N/A',
+			accessor: (region: any) => region.taxCode || 'N/A'
 		},
 		{
 			id: 'updatedAt',
 			label: 'Last Updated',
-			accessor: (region: any) => new Date(region.updatedAt).toLocaleDateString(),
+			accessor: (region: any) => new Date(region.updatedAt).toLocaleDateString()
 		}
 	];
 
@@ -98,27 +103,27 @@
 		{
 			id: 'slug',
 			label: 'Slug',
-			accessor: (channel: any) => channel.slug,
+			accessor: (channel: any) => channel.slug
 		},
 		{
 			id: 'region',
 			label: 'Region',
-			accessor: (channel: any) => channel.region,
+			accessor: (channel: any) => channel.region
 		},
 		{
 			id: 'currency',
 			label: 'Currency',
-			accessor: (channel: any) => channel.currencyCode,
+			accessor: (channel: any) => channel.currencyCode
 		},
 		{
 			id: 'taxInclusive',
 			label: 'Tax Inclusive',
-			accessor: (channel: any) => channel.taxInclusive ? 'Yes' : 'No',
+			accessor: (channel: any) => (channel.taxInclusive ? 'Yes' : 'No')
 		},
 		{
 			id: 'status',
 			label: 'Status',
-			accessor: (channel: any) => channel.isActive ? 'Active' : 'Inactive',
+			accessor: (channel: any) => (channel.isActive ? 'Active' : 'Inactive')
 		}
 	];
 
@@ -129,7 +134,9 @@
 
 	function handleDeleteRegion(region: any) {
 		if (confirm(`Are you sure you want to delete the region "${region.name}"?`)) {
-			regionsData = regionsData.filter(r => r.id !== region.id);
+			console.log('Delete region:', region);
+			// TODO: Implement actual delete API call and refresh data
+			// regionsPromise = getAllRegions();
 		}
 	}
 
@@ -139,7 +146,7 @@
 
 	function handleDeleteChannel(channel: any) {
 		if (confirm(`Are you sure you want to delete the channel "${channel.name}"?`)) {
-			channelsData = channelsData.filter(c => c.id !== channel.id);
+			channelsData = channelsData.filter((c) => c.id !== channel.id);
 		}
 	}
 
@@ -168,12 +175,13 @@
 			variant: 'danger' as const
 		}
 	];
+	// Remove this - we'll use the form fields directly in the template
 </script>
 
 <main class="m-10">
-    <div class="flex flex-col gap-2 my-6">
+	<div class="my-6 flex flex-col gap-2">
 		<h1 class="text-3xl font-semibold">Settings</h1>
-		<p class="text-gray-500 text-sm">Manage settings related to your business here</p>
+		<p class="text-sm text-gray-500">Manage settings related to your business here</p>
 	</div>
 
 	<!-- Tab Navigation -->
@@ -181,22 +189,22 @@
 		<div class="border-b border-neutral-200">
 			<nav class="-mb-px flex gap-8">
 				<button
-					class={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+					class={`border-b-2 px-1 py-2 text-sm font-medium transition-colors ${
 						activeTab === 'regions'
 							? 'border-primary-500 text-primary-600'
-							: 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+							: 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700'
 					}`}
-					onclick={() => activeTab = 'regions'}
+					onclick={() => (activeTab = 'regions')}
 				>
 					Regions & Tax Rates
 				</button>
 				<button
-					class={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+					class={`border-b-2 px-1 py-2 text-sm font-medium transition-colors ${
 						activeTab === 'channels'
 							? 'border-primary-500 text-primary-600'
-							: 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+							: 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700'
 					}`}
-					onclick={() => activeTab = 'channels'}
+					onclick={() => (activeTab = 'channels')}
 				>
 					Sales Channels
 				</button>
@@ -210,22 +218,30 @@
 			<div class="flex items-center justify-between">
 				<div>
 					<h2 class="text-xl font-semibold text-neutral-900">Regions & Tax Rates</h2>
-					<p class="text-sm text-neutral-600 mt-1">Configure geographical regions and their tax settings</p>
+					<p class="mt-1 text-sm text-neutral-600">
+						Configure geographical regions and their tax settings
+					</p>
 				</div>
 				<button
 					class="rounded-lg bg-primary-600 px-6 py-2 font-medium text-white shadow-md transition-colors hover:bg-primary-700 hover:shadow-lg"
-					onclick={() => showRegionModal = true}
+					onclick={() => (showRegionModal = true)}
 				>
 					+ Add Region
 				</button>
 			</div>
 
-			<DataTable
-				data={regionsData}
-				columns={regionColumns}
-				rowActions={regionActions}
-				keyFn={(region) => region.id}
-			/>
+			{#await regionsPromise}
+				<div class="py-8 text-center text-neutral-500">Loading regions...</div>
+			{:then data}
+				<DataTable
+					data={data.edges.map((edge: any) => edge.node)}
+					columns={regionColumns}
+					rowActions={regionActions}
+					keyFn={(region) => region.id}
+				/>
+			{:catch error}
+				<p class="text-red-500">Error loading regions: {error.message}</p>
+			{/await}
 		</div>
 	{:else}
 		<!-- Channels Section -->
@@ -233,11 +249,13 @@
 			<div class="flex items-center justify-between">
 				<div>
 					<h2 class="text-xl font-semibold text-neutral-900">Sales Channels</h2>
-					<p class="text-sm text-neutral-600 mt-1">Manage your different sales channels and their configurations</p>
+					<p class="mt-1 text-sm text-neutral-600">
+						Manage your different sales channels and their configurations
+					</p>
 				</div>
 				<button
 					class="rounded-lg bg-primary-600 px-6 py-2 font-medium text-white shadow-md transition-colors hover:bg-primary-700 hover:shadow-lg"
-					onclick={() => showChannelModal = true}
+					onclick={() => (showChannelModal = true)}
 				>
 					+ Add Channel
 				</button>
@@ -252,46 +270,192 @@
 		</div>
 	{/if}
 
-	<!-- Region Modal (placeholder) -->
+	<!-- Region Modal -->
 	{#if showRegionModal}
-		<div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-			<div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-				<h3 class="text-lg font-semibold mb-4">Add New Region</h3>
-				<p class="text-neutral-600 mb-6">Region creation form will be implemented here.</p>
-				<div class="flex gap-3 justify-end">
-					<button
-						class="px-4 py-2 text-neutral-600 hover:text-neutral-800 transition-colors"
-						onclick={() => showRegionModal = false}
-					>
-						Cancel
-					</button>
-					<button
-						class="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors"
-						onclick={() => showRegionModal = false}
-					>
-						Create Region
-					</button>
-				</div>
+		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+			<div class="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
+				<h3 class="mb-6 text-lg font-semibold">Add New Region</h3>
+
+				<form {...createRegion} class="space-y-4">
+					<!-- Region Name -->
+					<div>
+						<label for="regionName" class="mb-2 block text-sm font-medium text-neutral-700">
+							Region Name <span class="text-red-500">*</span>
+						</label>
+						<input
+							{...createRegion.fields.name.as('text')}
+							placeholder="e.g., North America, Europe"
+							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
+							required
+						/>
+						{#each createRegion.fields.name.issues() as issue}
+							<p class="mt-1 text-sm text-red-500">{issue.message}</p>
+						{/each}
+					</div>
+
+					<!-- Country Codes -->
+					<div>
+						<label class="mb-2 block text-sm font-medium text-neutral-700" for="countryCodes">
+							Country Codes <span class="text-red-500">*</span>
+						</label>
+
+						<!-- Selected Countries -->
+						{#if selectedCountries.length > 0}
+							<div class="mb-2 flex flex-wrap gap-2">
+								{#each selectedCountries as country}
+									<span
+										class="inline-flex items-center rounded-md bg-primary-50 px-2.5 py-1.5 text-sm text-primary-700"
+									>
+										{country}
+										<button
+											type="button"
+											class="ml-1 text-primary-500 hover:text-primary-700"
+											onclick={() => removeCountry(country)}
+										>
+											×
+										</button>
+									</span>
+								{/each}
+							</div>
+						{/if}
+
+						<!-- Hidden input to submit selected countries -->
+						<select {...createRegion.fields.countryCodes.as('select multiple')} multiple style="display: none;">
+							{#each selectedCountries as country}
+								<option value={country} selected>{country}</option>
+							{/each}
+						</select>
+						{#each createRegion.fields.countryCodes.issues() as issue}
+							<p class="mt-1 text-sm text-red-500">{issue.message}</p>
+						{/each}
+
+						<!-- Country Search Input -->
+						<div class="relative">
+							<input
+								type="text"
+								placeholder="Search and select country codes..."
+								class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
+								bind:value={countrySearchTerm}
+								onfocus={() => (showCountryDropdown = true)}
+								onblur={() => setTimeout(() => (showCountryDropdown = false), 150)}
+							/>
+
+							<!-- Dropdown -->
+							{#if showCountryDropdown && (countrySearchTerm || filteredCountries.length > 0)}
+								<div
+									class="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-neutral-300 bg-white shadow-lg"
+								>
+									{#if filteredCountries.length > 0}
+										{#each filteredCountries.slice(0, 10) as country}
+											<button
+												type="button"
+												class="w-full px-3 py-2 text-left text-sm hover:bg-neutral-50"
+												onclick={() => addCountry(country)}
+											>
+												{country}
+											</button>
+										{/each}
+									{:else if countrySearchTerm}
+										<div class="px-3 py-2 text-sm text-neutral-500">
+											No countries found matching "{countrySearchTerm}"
+										</div>
+									{:else}
+										{#each COMMON_COUNTRY_CODES.slice(0, 10) as country}
+											{#if !selectedCountries.includes(country)}
+												<button
+													type="button"
+													class="w-full px-3 py-2 text-left text-sm hover:bg-neutral-50"
+													onclick={() => addCountry(country)}
+												>
+													{country}
+												</button>
+											{/if}
+										{/each}
+									{/if}
+								</div>
+							{/if}
+						</div>
+
+						<p class="mt-1 text-xs text-neutral-500">
+							Search and select from predefined country codes (e.g., US, CA, GB)
+						</p>
+					</div>
+
+					<!-- Tax Rate -->
+					<div>
+						<label for="taxRate" class="mb-2 block text-sm font-medium text-neutral-700">
+							Tax Rate (%) <span class="text-red-500">*</span>
+						</label>
+						<input
+							{...createRegion.fields.taxRate.as('number')}
+							step="0.01"
+							min="0"
+							max="100"
+							placeholder="e.g., 8.25"
+							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
+							required
+						/>
+						{#each createRegion.fields.taxRate.issues() as issue}
+							<p class="mt-1 text-sm text-red-500">{issue.message}</p>
+						{/each}
+					</div>
+
+					<!-- Tax Code -->
+					<div>
+						<label for="taxCode" class="mb-2 block text-sm font-medium text-neutral-700">
+							Tax Code (Optional)
+						</label>
+						<input
+							{...createRegion.fields.taxCode.as('text')}
+							placeholder="e.g., VAT, GST, SALES_TAX"
+							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
+						/>
+						{#each createRegion.fields.taxCode.issues() as issue}
+							<p class="mt-1 text-sm text-red-500">{issue.message}</p>
+						{/each}
+
+						<p class="mt-1 text-xs text-neutral-500">
+							Optional identifier for the tax type (e.g., VAT, GST)
+						</p>
+					</div>
+
+					<!-- Form Actions -->
+					<div class="flex justify-end gap-3 pt-4">
+						<button
+							type="button"
+							class="px-4 py-2 text-neutral-600 transition-colors hover:text-neutral-800"
+							onclick={() => (showRegionModal = false)}
+						>
+							Cancel
+						</button>
+						<button
+							type="submit"
+							class="rounded-lg bg-primary-600 px-6 py-2 text-white shadow-md transition-colors hover:bg-primary-700 hover:shadow-lg"
+						>
+							Create Region
+						</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	{/if}
 
 	<!-- Channel Modal (placeholder) -->
 	{#if showChannelModal}
-		<div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-			<div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-				<h3 class="text-lg font-semibold mb-4">Add New Channel</h3>
-				<p class="text-neutral-600 mb-6">Channel creation form will be implemented here.</p>
-				<div class="flex gap-3 justify-end">
+		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+			<div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+				<h3 class="mb-4 text-lg font-semibold">Add New Channel</h3>
+				<p class="mb-6 text-neutral-600">Channel creation form will be implemented here.</p>
+				<div class="flex justify-end gap-3">
 					<button
-						class="px-4 py-2 text-neutral-600 hover:text-neutral-800 transition-colors"
-						onclick={() => showChannelModal = false}
+						class="px-4 py-2 text-neutral-600 transition-colors hover:text-neutral-800"
+						onclick={() => (showChannelModal = false)}
 					>
 						Cancel
 					</button>
 					<button
-						class="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors"
-						onclick={() => showChannelModal = false}
+						class="rounded bg-primary-600 px-4 py-2 text-white transition-colors hover:bg-primary-700"
+						onclick={() => (showChannelModal = false)}
 					>
 						Create Channel
 					</button>

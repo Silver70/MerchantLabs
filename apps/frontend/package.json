@@ -28,5 +28,9 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check ."
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"sveltekit-superforms": "^2.28.1",
+		"valibot": "^1.1.0"
+	}
 }
