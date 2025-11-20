@@ -1,10 +1,15 @@
 import type { MutationResolvers } from "../../../../types.generated";
 import { db } from "../../../../../db/index";
-import { channelsTable, regionsTable } from "../../../../../db/schema/regions-channels";
+import {
+  channelsTable,
+  regionsTable,
+} from "../../../../../db/schema/regions-channels";
 import { eq } from "drizzle-orm";
 import { generateSlug } from "../../../../../lib/slug";
 
-export const createChannel: NonNullable<MutationResolvers['createChannel']> = async (_parent, args, _ctx) => {
+export const createChannel: NonNullable<
+  MutationResolvers["createChannel"]
+> = async (_parent, args, _ctx) => {
   try {
     // Validate region exists
     const region = await db.query.regionsTable.findFirst({

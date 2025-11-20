@@ -5,7 +5,7 @@
 		COMMON_CURRENCIES,
 		COMMON_LANGUAGES
 	} from '$lib/validations/channel';
-	import { getAllRegions, createRegion, getAllChannels } from './data.remote';
+	import { getAllRegions, createRegion, getAllChannels, createChannel } from './data.remote';
 
 	// Load regions data from backend
 	let regionsPromise = $state(getAllRegions());
@@ -58,11 +58,22 @@
 		regionsPromise = getAllRegions();
 	}
 
-	// Watch for successful form submission
+	// Reset channel modal
+	function resetChannelModal() {
+		showChannelModal = false;
+		// Refresh channels data
+		channelPromise = getAllChannels();
+	}
+
+	// Watch for successful form submissions
 	$effect(() => {
 		// Access the result from the remote function
 		if (createRegion.result?.success) {
 			resetRegionModal();
+		}
+
+		if (createChannel.result?.success) {
+			resetChannelModal();
 		}
 	});
 
@@ -478,38 +489,21 @@
 			<div class="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
 				<h3 class="mb-6 text-lg font-semibold">Add New Channel</h3>
 
-				<form class="space-y-4">
+				<form {...createChannel} class="space-y-4">
 					<!-- Channel Name -->
 					<div>
 						<label for="channelName" class="mb-2 block text-sm font-medium text-neutral-700">
 							Channel Name <span class="text-red-500">*</span>
 						</label>
 						<input
-							type="text"
-							id="channelName"
-							name="name"
+							{...createChannel.fields.name.as('text')}
 							placeholder="e.g., Main Store, US Store"
 							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
 							required
 						/>
-					</div>
-
-					<!-- Channel Slug -->
-					<div>
-						<label for="channelSlug" class="mb-2 block text-sm font-medium text-neutral-700">
-							Slug <span class="text-red-500">*</span>
-						</label>
-						<input
-							type="text"
-							id="channelSlug"
-							name="slug"
-							placeholder="e.g., main-store, us-store"
-							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
-							required
-						/>
-						<p class="mt-1 text-xs text-neutral-500">
-							URL-friendly identifier (lowercase, numbers, hyphens only)
-						</p>
+						{#each createChannel.fields.name.issues() as issue}
+							<p class="mt-1 text-sm text-red-500">{issue.message}</p>
+						{/each}
 					</div>
 
 					<!-- Region Selection -->
@@ -518,8 +512,7 @@
 							Region <span class="text-red-500">*</span>
 						</label>
 						<select
-							id="regionSelect"
-							name="regionId"
+							{...createChannel.fields.regionId.as('select')}
 							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
 							required
 						>
@@ -530,6 +523,9 @@
 								{/each}
 							{/await}
 						</select>
+						{#each createChannel.fields.regionId.issues() as issue}
+							<p class="mt-1 text-sm text-red-500">{issue.message}</p>
+						{/each}
 					</div>
 
 					<!-- Currency -->
@@ -538,8 +534,7 @@
 							Currency <span class="text-red-500">*</span>
 						</label>
 						<select
-							id="currencySelect"
-							name="currencyCode"
+							{...createChannel.fields.currencyCode.as('select')}
 							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
 							required
 						>
@@ -548,14 +543,16 @@
 								<option value={currency.code}>{currency.code} - {currency.name}</option>
 							{/each}
 						</select>
+						{#each createChannel.fields.currencyCode.issues() as issue}
+							<p class="mt-1 text-sm text-red-500">{issue.message}</p>
+						{/each}
 					</div>
 
 					<!-- Tax Inclusive -->
 					<div>
 						<label class="flex items-center gap-3">
 							<input
-								type="checkbox"
-								name="taxInclusive"
+								{...createChannel.fields.taxInclusive.as('checkbox')}
 								class="rounded border-neutral-300 text-primary-600 focus:ring-2 focus:ring-primary-500"
 							/>
 							<span class="text-sm font-medium text-neutral-700">Tax Inclusive Pricing</span>
@@ -571,8 +568,7 @@
 							Default Language (Optional)
 						</label>
 						<select
-							id="languageSelect"
-							name="defaultLanguage"
+							{...createChannel.fields.defaultLanguage.as('select')}
 							class="w-full rounded-lg border border-neutral-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-primary-500 focus:outline-none"
 						>
 							<option value="">Select language</option>
@@ -580,6 +576,9 @@
 								<option value={language.code}>{language.name} ({language.code})</option>
 							{/each}
 						</select>
+						{#each createChannel.fields.defaultLanguage.issues() as issue}
+							<p class="mt-1 text-sm text-red-500">{issue.message}</p>
+						{/each}
 					</div>
 
 					<!-- Form Actions -->

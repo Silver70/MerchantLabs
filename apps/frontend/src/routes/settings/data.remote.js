@@ -1,4 +1,9 @@
-import { GET_ALL_REGIONS, GET_ALL_CHANNELS, CREATE_REGION } from '$lib/graphql/channelQueries';
+import {
+	GET_ALL_REGIONS,
+	GET_ALL_CHANNELS,
+	CREATE_REGION,
+	CREATE_CHANNEL
+} from '$lib/graphql/channelQueries';
 import { form, query } from '$app/server';
 import {
 	CreateRegionSchema,
@@ -125,3 +130,72 @@ export const getAllChannels = query(async (first = 20, after = null, filter = nu
 
 	return result.data.channels;
 });
+
+export const createChannel = form(
+	CreateChannelSchema,
+	async ({ name, regionId, currencyCode, taxInclusive, defaultLanguage }) => {
+		console.log('Creating channel with data:', {
+			name,
+			regionId,
+			currencyCode,
+			taxInclusive,
+			defaultLanguage
+		});
+
+		try {
+			const response = await fetch(GRAPHQL_URL, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json'
+				},
+				body: JSON.stringify({
+					query: CREATE_CHANNEL,
+					variables: {
+						input: {
+							name,
+							slug: '',
+							regionId,
+							currencyCode,
+							taxInclusive,
+							defaultLanguage
+						}
+					}
+				})
+			});
+
+			console.log('GraphQL response status:', response.status);
+
+			if (!response.ok) {
+				const errorText = await response.text();
+				console.error('GraphQL request failed:', errorText);
+				throw new Error(`Failed to create channel: ${response.status} ${response.statusText}`);
+			}
+
+			const result = await response.json();
+			console.log('GraphQL response:', result);
+
+			// Check for GraphQL errors
+			if (result.errors) {
+				console.error('GraphQL errors:', result.errors);
+				throw new Error(result.errors[0]?.message || 'GraphQL error');
+			}
+
+			// Check mutation success
+			if (!result.data?.createChannel?.success) {
+				const errorMessage =
+					result.data?.createChannel?.error?.message || 'Failed to create channel';
+				console.error('Mutation failed:', errorMessage);
+				throw new Error(errorMessage);
+			}
+
+			// Return success response instead of redirecting
+			return {
+				success: true
+			};
+		} catch (error) {
+			console.error('Error in createChannel:', error);
+			throw error; // Re-throw to show user the error
+		}
+	}
+);

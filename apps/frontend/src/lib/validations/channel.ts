@@ -62,13 +62,6 @@ export const CreateChannelSchema = object({
 		minLength(2, 'Name must be at least 2 characters'),
 		maxLength(100, 'Name must be less than 100 characters')
 	),
-	slug: pipe(
-		string('Slug is required'),
-		minLength(2, 'Slug must be at least 2 characters'),
-		maxLength(100, 'Slug must be less than 100 characters'),
-		regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'),
-		transform(toLowerCase)
-	),
 	regionId: pipe(string('Region is required'), minLength(1, 'Please select a region')),
 	currencyCode: pipe(
 		string('Currency code is required'),
