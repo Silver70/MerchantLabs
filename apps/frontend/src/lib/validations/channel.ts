@@ -174,3 +174,12 @@ export const COMMON_LANGUAGES = [
 	{ code: 'da', name: 'Danish' },
 	{ code: 'fi', name: 'Finnish' }
 ];
+
+// Delete schemas
+export const DeleteRegionSchema = object({
+	id: pipe(string('ID is required'), minLength(1, 'Please provide a valid ID'))
+});
+
+export const DeleteChannelSchema = object({
+	id: pipe(string('ID is required'), minLength(1, 'Please provide a valid ID'))
+});

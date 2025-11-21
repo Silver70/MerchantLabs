@@ -166,11 +166,104 @@
 		console.log('Edit region:', region);
 	}
 
-	function handleDeleteRegion(region: any) {
+	async function handleDeleteRegion(region: any) {
 		if (confirm(`Are you sure you want to delete the region "${region.name}"?`)) {
-			console.log('Delete region:', region);
-			// TODO: Implement actual delete API call and refresh data
-			// regionsPromise = getAllRegions();
+			try {
+				console.log('About to delete region:', region);
+
+				// First check if there are channels using this region
+				const channelsResponse = await fetch('http://localhost:4000/graphql', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Accept: 'application/json'
+					},
+					body: JSON.stringify({
+						query: `
+							query GetChannelsByRegion {
+								channels(first: 100) {
+									edges {
+										node {
+											id
+											name
+											region {
+												id
+											}
+										}
+									}
+								}
+							}
+						`
+					})
+				});
+
+				if (channelsResponse.ok) {
+					const channelsResult = await channelsResponse.json();
+					const dependentChannels =
+						channelsResult.data?.channels?.edges?.filter(
+							(edge: any) => edge.node.region?.id === region.id
+						) || [];
+
+					if (dependentChannels.length > 0) {
+						const channelNames = dependentChannels.map((edge: any) => edge.node.name).join(', ');
+						if (
+							!confirm(
+								`This region has ${dependentChannels.length} dependent channel(s): ${channelNames}. ` +
+									`Deleting this region will also delete these channels. Do you want to continue?`
+							)
+						) {
+							return; // User cancelled
+						}
+					}
+				}
+
+				// Call delete mutation directly
+				const response = await fetch('http://localhost:4000/graphql', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Accept: 'application/json'
+					},
+					body: JSON.stringify({
+						query: `
+							mutation DeleteRegion($id: UUID!) {
+								deleteRegion(id: $id) {
+									success
+									error {
+										code
+										message
+									}
+								}
+							}
+						`,
+						variables: {
+							id: region.id
+						}
+					})
+				});
+
+				if (!response.ok) {
+					throw new Error(`Request failed: ${response.statusText}`);
+				}
+
+				const result = await response.json();
+
+				if (result.errors) {
+					throw new Error(result.errors[0].message);
+				}
+
+				if (result.data?.deleteRegion?.success) {
+					regionsPromise = getAllRegions(); // Refresh the regions data
+					channelPromise = getAllChannels(); // Also refresh channels since they may have been deleted
+				} else {
+					const errorMessage =
+						result.data?.deleteRegion?.error?.message || 'Failed to delete region';
+					throw new Error(errorMessage);
+				}
+			} catch (error) {
+				console.error('Failed to delete region:', error);
+				alert('Failed to delete region. Please try again.');
+			}
 		}
 	}
 
@@ -178,9 +271,54 @@
 		console.log('Edit channel:', channel);
 	}
 
-	function handleDeleteChannel(channel: any) {
+	async function handleDeleteChannel(channel: any) {
 		if (confirm(`Are you sure you want to delete the channel "${channel.name}"?`)) {
-			channelsData = channelsData.filter((c) => c.id !== channel.id);
+			try {
+				const response = await fetch('http://localhost:4000/graphql', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Accept: 'application/json'
+					},
+					body: JSON.stringify({
+						query: `
+							mutation DeleteChannel($id: UUID!) {
+								deleteChannel(id: $id) {
+									success
+									error {
+										code
+										message
+									}
+								}
+							}
+						`,
+						variables: {
+							id: channel.id
+						}
+					})
+				});
+
+				if (!response.ok) {
+					throw new Error(`Request failed: ${response.statusText}`);
+				}
+
+				const result = await response.json();
+
+				if (result.errors) {
+					throw new Error(result.errors[0].message);
+				}
+
+				if (result.data?.deleteChannel?.success) {
+					channelPromise = getAllChannels(); // Refresh the channels data
+				} else {
+					const errorMessage =
+						result.data?.deleteChannel?.error?.message || 'Failed to delete channel';
+					throw new Error(errorMessage);
+				}
+			} catch (error) {
+				console.error('Failed to delete channel:', error);
+				alert('Failed to delete channel. Please try again.');
+			}
 		}
 	}
 

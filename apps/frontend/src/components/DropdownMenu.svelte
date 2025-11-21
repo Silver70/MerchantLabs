@@ -58,7 +58,7 @@
 <div class="relative inline-block" bind:this={dropdownElement}>
 	<!-- Trigger Button -->
 	<button
-		class="p-2 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+		class="rounded-lg p-2 text-neutral-600 transition-colors hover:bg-primary-50 hover:text-primary-600"
 		title="More actions"
 		onclick={toggleDropdown}
 	>
@@ -68,7 +68,7 @@
 	<!-- Dropdown Menu -->
 	{#if isOpen}
 		<div
-			class="absolute right-0 mt-2 w-48 bg-white border border-neutral-200 rounded-lg shadow-lg z-50"
+			class="absolute right-0 z-50 mt-2 w-48 rounded-lg border border-neutral-200 bg-white shadow-lg"
 			role="menu"
 		>
 			<div class="py-1">

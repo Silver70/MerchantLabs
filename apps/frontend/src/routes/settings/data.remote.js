@@ -2,7 +2,10 @@ import {
 	GET_ALL_REGIONS,
 	GET_ALL_CHANNELS,
 	CREATE_REGION,
-	CREATE_CHANNEL
+	CREATE_CHANNEL,
+	GET_REGION_BY_ID,
+	DELETE_REGION,
+	DELETE_CHANNEL
 } from '$lib/graphql/channelQueries';
 import { form, query } from '$app/server';
 import {
@@ -10,7 +13,9 @@ import {
 	UpdateRegionSchema,
 	CreateChannelSchema,
 	UpdateChannelSchema,
-	ChannelProductPriceSchema
+	ChannelProductPriceSchema,
+	DeleteRegionSchema,
+	DeleteChannelSchema
 } from '$lib/validations/channel';
 import { redirect } from '@sveltejs/kit';
 
@@ -44,6 +49,79 @@ export const getAllRegions = query(async (first = 20, after = null, filter = nul
 	}
 
 	return result.data.regions;
+});
+
+//@ts-ignore
+export const getRegionById = query(async (id) => {
+	const response = await fetch(GRAPHQL_URL, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json'
+		},
+		body: JSON.stringify({
+			query: GET_REGION_BY_ID,
+			variables: {
+				id
+			}
+		})
+	});
+
+	if (!response.ok) {
+		throw new Error(`GraphQL request failed: ${response.statusText}`);
+	}
+
+	const result = await response.json();
+
+	if (result.errors) {
+		throw new Error(result.errors[0].message);
+	}
+
+	return result.data.region;
+});
+
+export const deleteRegion = form(DeleteRegionSchema, async ({ id }) => {
+	console.log('Deleting region with ID:', id);
+	console.log('DELETE_REGION query:', DELETE_REGION);
+
+	const response = await fetch(GRAPHQL_URL, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json'
+		},
+		body: JSON.stringify({
+			query: DELETE_REGION,
+			variables: {
+				id
+			}
+		})
+	});
+
+	console.log('Response status:', response.status);
+
+	if (!response.ok) {
+		const errorText = await response.text();
+		console.log('Error response:', errorText);
+		throw new Error(`GraphQL request failed: ${response.statusText}`);
+	}
+
+	const result = await response.json();
+	console.log('GraphQL result:', result);
+
+	if (result.errors) {
+		console.log('GraphQL errors:', result.errors);
+		throw new Error(result.errors[0].message);
+	}
+
+	if (!result.data?.deleteRegion?.success) {
+		const errorMessage = result.data?.deleteRegion?.error?.message || 'Failed to delete region';
+		throw new Error(errorMessage);
+	}
+
+	return {
+		success: true
+	};
 });
 
 export const createRegion = form(
@@ -199,3 +277,38 @@ export const createChannel = form(
 		}
 	}
 );
+
+export const deleteChannel = form(DeleteChannelSchema, async ({ id }) => {
+	const response = await fetch(GRAPHQL_URL, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json'
+		},
+		body: JSON.stringify({
+			query: DELETE_CHANNEL,
+			variables: {
+				id
+			}
+		})
+	});
+
+	if (!response.ok) {
+		throw new Error(`GraphQL request failed: ${response.statusText}`);
+	}
+
+	const result = await response.json();
+
+	if (result.errors) {
+		throw new Error(result.errors[0].message);
+	}
+
+	if (!result.data?.deleteChannel?.success) {
+		const errorMessage = result.data?.deleteChannel?.error?.message || 'Failed to delete channel';
+		throw new Error(errorMessage);
+	}
+
+	return {
+		success: true
+	};
+});
